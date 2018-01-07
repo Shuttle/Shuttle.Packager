@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shuttle.Packager", "Shuttle.Packager\Shuttle.Packager.csproj", "{4E7F1217-9F87-4B04-AC28-2731EF943090}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B412052D-3532-4240-ABA7-436C9B8FCCCC}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E7F1217-9F87-4B04-AC28-2731EF943090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E7F1217-9F87-4B04-AC28-2731EF943090}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E7F1217-9F87-4B04-AC28-2731EF943090}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E7F1217-9F87-4B04-AC28-2731EF943090}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1262440E-DD68-4280-BAA0-9A301369373D}
+	EndGlobalSection
+EndGlobal
