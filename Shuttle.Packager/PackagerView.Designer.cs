@@ -28,10 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Packages = new System.Windows.Forms.ListView();
-            this.PackageNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.VersionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.LocationColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.Folder = new System.Windows.Forms.TextBox();
             this.FolderButton = new System.Windows.Forms.Button();
@@ -42,42 +38,18 @@
             this.MinorButton = new System.Windows.Forms.Button();
             this.PatchButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.PackageTab = new System.Windows.Forms.TabPage();
+            this.BuildLogTab = new System.Windows.Forms.TabPage();
+            this.Packages = new System.Windows.Forms.ListView();
+            this.PackageNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.VersionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.LocationColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.BuildLog = new System.Windows.Forms.TextBox();
+            this.tabControl1.SuspendLayout();
+            this.PackageTab.SuspendLayout();
+            this.BuildLogTab.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // Packages
-            // 
-            this.Packages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Packages.CheckBoxes = true;
-            this.Packages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.PackageNameColumn,
-            this.VersionColumn,
-            this.LocationColumn});
-            this.Packages.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Packages.FullRowSelect = true;
-            this.Packages.HideSelection = false;
-            this.Packages.Location = new System.Drawing.Point(20, 140);
-            this.Packages.Name = "Packages";
-            this.Packages.Size = new System.Drawing.Size(862, 460);
-            this.Packages.TabIndex = 0;
-            this.Packages.UseCompatibleStateImageBehavior = false;
-            this.Packages.View = System.Windows.Forms.View.Details;
-            // 
-            // PackageNameColumn
-            // 
-            this.PackageNameColumn.Text = "Package";
-            this.PackageNameColumn.Width = 200;
-            // 
-            // VersionColumn
-            // 
-            this.VersionColumn.Text = "Version";
-            this.VersionColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.VersionColumn.Width = 120;
-            // 
-            // LocationColumn
-            // 
-            this.LocationColumn.Width = 200;
             // 
             // label1
             // 
@@ -175,11 +147,92 @@
             this.ResetButton.UseVisualStyleBackColor = true;
             this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.PackageTab);
+            this.tabControl1.Controls.Add(this.BuildLogTab);
+            this.tabControl1.Location = new System.Drawing.Point(20, 140);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(860, 460);
+            this.tabControl1.TabIndex = 11;
+            // 
+            // PackageTab
+            // 
+            this.PackageTab.Controls.Add(this.Packages);
+            this.PackageTab.Location = new System.Drawing.Point(4, 25);
+            this.PackageTab.Name = "PackageTab";
+            this.PackageTab.Padding = new System.Windows.Forms.Padding(3);
+            this.PackageTab.Size = new System.Drawing.Size(852, 431);
+            this.PackageTab.TabIndex = 0;
+            this.PackageTab.Text = "Packages";
+            this.PackageTab.UseVisualStyleBackColor = true;
+            // 
+            // BuildLogTab
+            // 
+            this.BuildLogTab.Controls.Add(this.BuildLog);
+            this.BuildLogTab.Location = new System.Drawing.Point(4, 25);
+            this.BuildLogTab.Name = "BuildLogTab";
+            this.BuildLogTab.Padding = new System.Windows.Forms.Padding(3);
+            this.BuildLogTab.Size = new System.Drawing.Size(852, 431);
+            this.BuildLogTab.TabIndex = 1;
+            this.BuildLogTab.Text = "Log";
+            this.BuildLogTab.UseVisualStyleBackColor = true;
+            // 
+            // Packages
+            // 
+            this.Packages.CheckBoxes = true;
+            this.Packages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.PackageNameColumn,
+            this.VersionColumn,
+            this.LocationColumn});
+            this.Packages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Packages.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Packages.FullRowSelect = true;
+            this.Packages.HideSelection = false;
+            this.Packages.Location = new System.Drawing.Point(3, 3);
+            this.Packages.Name = "Packages";
+            this.Packages.Size = new System.Drawing.Size(846, 425);
+            this.Packages.TabIndex = 1;
+            this.Packages.UseCompatibleStateImageBehavior = false;
+            this.Packages.View = System.Windows.Forms.View.Details;
+            // 
+            // PackageNameColumn
+            // 
+            this.PackageNameColumn.Text = "Package";
+            this.PackageNameColumn.Width = 200;
+            // 
+            // VersionColumn
+            // 
+            this.VersionColumn.Text = "Version";
+            this.VersionColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.VersionColumn.Width = 120;
+            // 
+            // LocationColumn
+            // 
+            this.LocationColumn.Width = 200;
+            // 
+            // BuildLog
+            // 
+            this.BuildLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BuildLog.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BuildLog.Location = new System.Drawing.Point(3, 3);
+            this.BuildLog.Multiline = true;
+            this.BuildLog.Name = "BuildLog";
+            this.BuildLog.ReadOnly = true;
+            this.BuildLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.BuildLog.Size = new System.Drawing.Size(846, 425);
+            this.BuildLog.TabIndex = 0;
+            // 
             // PackagerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(905, 679);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.ResetButton);
             this.Controls.Add(this.PatchButton);
             this.Controls.Add(this.MinorButton);
@@ -189,31 +242,37 @@
             this.Controls.Add(this.FolderButton);
             this.Controls.Add(this.Folder);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.Packages);
             this.Name = "PackagerView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Shuttle Packager";
+            this.tabControl1.ResumeLayout(false);
+            this.PackageTab.ResumeLayout(false);
+            this.BuildLogTab.ResumeLayout(false);
+            this.BuildLogTab.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ListView Packages;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox Folder;
         private System.Windows.Forms.Button FolderButton;
         private System.Windows.Forms.FolderBrowserDialog FolderBrowser;
         private System.Windows.Forms.Button FetchButton;
-        private System.Windows.Forms.ColumnHeader PackageNameColumn;
-        private System.Windows.Forms.ColumnHeader VersionColumn;
-        private System.Windows.Forms.ColumnHeader LocationColumn;
         private System.Windows.Forms.Button BuildButton;
         private System.Windows.Forms.Button MajorButton;
         private System.Windows.Forms.Button MinorButton;
         private System.Windows.Forms.Button PatchButton;
         private System.Windows.Forms.Button ResetButton;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage PackageTab;
+        private System.Windows.Forms.ListView Packages;
+        private System.Windows.Forms.ColumnHeader PackageNameColumn;
+        private System.Windows.Forms.ColumnHeader VersionColumn;
+        private System.Windows.Forms.ColumnHeader LocationColumn;
+        private System.Windows.Forms.TabPage BuildLogTab;
+        private System.Windows.Forms.TextBox BuildLog;
     }
 }
 

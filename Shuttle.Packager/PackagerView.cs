@@ -115,6 +115,8 @@ namespace Shuttle.Packager
 
         private void BuildButton_Click(object sender, EventArgs e)
         {
+            BuildButton.Enabled = false;
+
             foreach (ListViewItem item in Packages.CheckedItems)
             {
                 Execute(item.Package(), "build");
@@ -123,14 +125,44 @@ namespace Shuttle.Packager
 
         private void Execute(Package package, string target)
         {
-            var psi = new ProcessStartInfo
+            BuildLog.Text = string.Empty;
+
+            BuildLogTab.Select();
+            BuildLogTab.Text = package.Name;
+
+            var process = new Process
             {
-                WorkingDirectory = Path.GetDirectoryName(package.MSBuildPath),
-                Arguments = Path.GetFileName(package.MSBuildPath) + $" /p:SemanticVersion={package.BuildVersion.Formatted()}" + (!string.IsNullOrEmpty(target) ? $" /t:{target}" : string.Empty),
-                FileName = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+                StartInfo = new ProcessStartInfo
+                {
+                    WorkingDirectory = Path.GetDirectoryName(package.MSBuildPath),
+                    Arguments = Path.GetFileName(package.MSBuildPath) +
+                                $" /p:SemanticVersion={package.BuildVersion.Formatted()}" +
+                                (!string.IsNullOrEmpty(target) ? $" /t:{target}" : string.Empty),
+                    FileName =
+                        @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe",
+                    CreateNoWindow = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                },
+                EnableRaisingEvents = true,
             };
 
-            Process.Start(psi);
+            process.OutputDataReceived += (sender, args) =>
+            {
+                Invoke(new Action(() =>
+                {
+                    BuildLog.SelectionStart = BuildLog.TextLength;
+                    BuildLog.SelectedText = args.Data + Environment.NewLine;
+                }));
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.WaitForExit();
+            process.CancelOutputRead();
+
+            package.CaptureBuildLog(BuildLog.Text);
         }
     }
 }

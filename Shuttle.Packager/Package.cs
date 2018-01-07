@@ -14,9 +14,11 @@ namespace Shuttle.Packager
             MSBuildPath = msbuildPath;
         }
 
+        public string Name => _item.Text;
         public SemanticVersion CurrentVersion { get; }
         public SemanticVersion BuildVersion { get; private set; }
         public string MSBuildPath { get; }
+        public string BuildLog { get; private set; }
 
         public Package IncreaseMajor()
         {
@@ -57,6 +59,11 @@ namespace Shuttle.Packager
             BuildVersion = CurrentVersion.Copy();
 
             RenderVersion();
+        }
+
+        public void CaptureBuildLog(string text)
+        {
+            BuildLog = text;
         }
     }
 }
