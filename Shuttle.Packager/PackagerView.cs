@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Shuttle.Packager
@@ -119,16 +120,25 @@ namespace Shuttle.Packager
 
             foreach (ListViewItem item in Packages.CheckedItems)
             {
-                Execute(item.Package(), "build");
+                var thread = new Thread(()=> Execute(item.Package(), "build"));
+                thread.Start();
+                thread.Join();
             }
+
+            BuildButton.Enabled = true;
         }
 
         private void Execute(Package package, string target)
         {
-            BuildLog.Text = string.Empty;
-
-            BuildLogTab.Select();
-            BuildLogTab.Text = package.Name;
+            BeginInvoke(new Action(() =>
+            {
+                BuildLog.Text = string.Empty;
+                BuildLogTab.Select();
+                BuildLogTab.Text = package.Name;
+                BuildLogTab.Refresh();
+                PackageTabs.Refresh();
+                Application.DoEvents();
+            }));
 
             var process = new Process
             {
@@ -150,16 +160,22 @@ namespace Shuttle.Packager
 
             process.OutputDataReceived += (sender, args) =>
             {
-                Invoke(new Action(() =>
+                BeginInvoke(new Action(() =>
                 {
                     BuildLog.SelectionStart = BuildLog.TextLength;
                     BuildLog.SelectedText = args.Data + Environment.NewLine;
+                    BuildLog.Refresh();
                 }));
             };
 
             process.Start();
             process.BeginOutputReadLine();
-            process.WaitForExit();
+
+            while (!process.HasExited)
+            {
+                Application.DoEvents();
+            }
+
             process.CancelOutputRead();
 
             package.CaptureBuildLog(BuildLog.Text);

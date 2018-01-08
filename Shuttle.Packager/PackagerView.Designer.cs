@@ -38,15 +38,15 @@
             this.MinorButton = new System.Windows.Forms.Button();
             this.PatchButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.PackageTabs = new System.Windows.Forms.TabControl();
             this.PackageTab = new System.Windows.Forms.TabPage();
-            this.BuildLogTab = new System.Windows.Forms.TabPage();
             this.Packages = new System.Windows.Forms.ListView();
             this.PackageNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.VersionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LocationColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.BuildLogTab = new System.Windows.Forms.TabPage();
             this.BuildLog = new System.Windows.Forms.TextBox();
-            this.tabControl1.SuspendLayout();
+            this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
             this.SuspendLayout();
@@ -147,18 +147,18 @@
             this.ResetButton.UseVisualStyleBackColor = true;
             this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
-            // tabControl1
+            // PackageTabs
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.PackageTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.PackageTab);
-            this.tabControl1.Controls.Add(this.BuildLogTab);
-            this.tabControl1.Location = new System.Drawing.Point(20, 140);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(860, 460);
-            this.tabControl1.TabIndex = 11;
+            this.PackageTabs.Controls.Add(this.PackageTab);
+            this.PackageTabs.Controls.Add(this.BuildLogTab);
+            this.PackageTabs.Location = new System.Drawing.Point(20, 140);
+            this.PackageTabs.Name = "PackageTabs";
+            this.PackageTabs.SelectedIndex = 0;
+            this.PackageTabs.Size = new System.Drawing.Size(860, 460);
+            this.PackageTabs.TabIndex = 11;
             // 
             // PackageTab
             // 
@@ -170,17 +170,6 @@
             this.PackageTab.TabIndex = 0;
             this.PackageTab.Text = "Packages";
             this.PackageTab.UseVisualStyleBackColor = true;
-            // 
-            // BuildLogTab
-            // 
-            this.BuildLogTab.Controls.Add(this.BuildLog);
-            this.BuildLogTab.Location = new System.Drawing.Point(4, 25);
-            this.BuildLogTab.Name = "BuildLogTab";
-            this.BuildLogTab.Padding = new System.Windows.Forms.Padding(3);
-            this.BuildLogTab.Size = new System.Drawing.Size(852, 431);
-            this.BuildLogTab.TabIndex = 1;
-            this.BuildLogTab.Text = "Log";
-            this.BuildLogTab.UseVisualStyleBackColor = true;
             // 
             // Packages
             // 
@@ -215,6 +204,17 @@
             // 
             this.LocationColumn.Width = 200;
             // 
+            // BuildLogTab
+            // 
+            this.BuildLogTab.Controls.Add(this.BuildLog);
+            this.BuildLogTab.Location = new System.Drawing.Point(4, 25);
+            this.BuildLogTab.Name = "BuildLogTab";
+            this.BuildLogTab.Padding = new System.Windows.Forms.Padding(3);
+            this.BuildLogTab.Size = new System.Drawing.Size(852, 431);
+            this.BuildLogTab.TabIndex = 1;
+            this.BuildLogTab.Text = "Log";
+            this.BuildLogTab.UseVisualStyleBackColor = true;
+            // 
             // BuildLog
             // 
             this.BuildLog.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -232,7 +232,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(905, 679);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.PackageTabs);
             this.Controls.Add(this.ResetButton);
             this.Controls.Add(this.PatchButton);
             this.Controls.Add(this.MinorButton);
@@ -245,7 +245,7 @@
             this.Name = "PackagerView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Shuttle Packager";
-            this.tabControl1.ResumeLayout(false);
+            this.PackageTabs.ResumeLayout(false);
             this.PackageTab.ResumeLayout(false);
             this.BuildLogTab.ResumeLayout(false);
             this.BuildLogTab.PerformLayout();
@@ -265,7 +265,7 @@
         private System.Windows.Forms.Button MinorButton;
         private System.Windows.Forms.Button PatchButton;
         private System.Windows.Forms.Button ResetButton;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl PackageTabs;
         private System.Windows.Forms.TabPage PackageTab;
         private System.Windows.Forms.ListView Packages;
         private System.Windows.Forms.ColumnHeader PackageNameColumn;
