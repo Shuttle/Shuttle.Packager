@@ -208,7 +208,7 @@
             // 
             this.VersionColumn.Text = "Version";
             this.VersionColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.VersionColumn.Width = 120;
+            this.VersionColumn.Width = 150;
             // 
             // LocationColumn
             // 
@@ -236,8 +236,10 @@
             // 
             // BuildLog
             // 
+            this.BuildLog.BackColor = System.Drawing.Color.Black;
             this.BuildLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.BuildLog.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BuildLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.BuildLog.Location = new System.Drawing.Point(3, 3);
             this.BuildLog.Multiline = true;
             this.BuildLog.Name = "BuildLog";
@@ -274,7 +276,7 @@
             this.PackageContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.UpdateUsagesMenuItem});
             this.PackageContextMenu.Name = "ItemContextMenu";
-            this.PackageContextMenu.Size = new System.Drawing.Size(177, 56);
+            this.PackageContextMenu.Size = new System.Drawing.Size(177, 28);
             // 
             // UpdateUsagesMenuItem
             // 

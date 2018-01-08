@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -10,16 +12,78 @@ namespace Shuttle.Packager
     {
         private readonly Regex _assemblyVersionExpression =
             new Regex(@"AssemblyVersion\s*\(\s*""(?<version>.*)""\s*\)", RegexOptions.IgnoreCase);
+        private readonly Regex _packageVersionExpression =
+            new Regex(@"<PackageReference\s*Include=""(?<package>.*?)""\s*Version=""(?<version>(?<major>\d*)\.(?<minor>\d*)\.(?<patch>\d*))""\s*/>", RegexOptions.IgnoreCase);
 
         public PackagerView()
         {
             InitializeComponent();
 
             FetchPackages(Folder.Text);
+
+            UpdateUsagesMenuItem.Click += UpdateUsages;
+        }
+
+        private void UpdateUsages(object sender, EventArgs e)
+        {
+            if (Packages.FocusedItem == null)
+            {
+                return;
+            }
+
+            var package = Packages.FocusedItem.Package();
+            var logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+
+            if (!Directory.Exists(logFolder))
+            {
+                Directory.CreateDirectory(logFolder);
+            }
+
+            var log = new StringBuilder();
+
+            foreach (ListViewItem item in Packages.Items)
+            {
+                var matches = _packageVersionExpression.Matches(File.ReadAllText(item.Package().ProjectPath));
+
+                if (matches.Count == 0)
+                {
+                    continue;
+                }
+
+                var found = false;
+
+                foreach (Match match in matches)
+                {
+                    if (match.Groups["package"].Value.Equals(package.Name, 
+                            StringComparison.CurrentCultureIgnoreCase)
+                        &&
+                        !match.Groups["version"].Value.Equals(package.CurrentVersion.Formatted(),
+                            StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    log.AppendLine(item.Package().Name);
+                }
+            }
+
+            if (log.Length > 0)
+            {
+                File.WriteAllText(Path.Combine(logFolder, $"{package.Name}-{package.CurrentVersion.Formatted()}-usages.log"), log.ToString());
+            }
+            else
+            {
+                MessageBox.Show(@"No usages found that require an update.");
+            }
         }
 
         private void FetchPackages(string folder)
         {
+            Packages.Items.Clear();
             FetchPackages(folder, folder);
         }
 
@@ -32,12 +96,14 @@ namespace Shuttle.Packager
 
             foreach (var directory in Directory.GetDirectories(folder))
             {
+                var packageName = Path.GetFileName(directory);
                 var msbuildPath = Path.Combine(directory, ".build\\package.msbuild");
                 var assemblyInfoPath = Path.Combine(directory, "Properties\\AssemblyInfo.cs");
+                var projectPath = Path.Combine(directory, $"{packageName}.csproj");
 
                 try
                 {
-                    if (!File.Exists(msbuildPath) || !File.Exists(assemblyInfoPath))
+                    if (!File.Exists(msbuildPath) || !File.Exists(assemblyInfoPath) || !File.Exists(projectPath))
                     {
                         continue;
                     }
@@ -49,12 +115,12 @@ namespace Shuttle.Packager
                         continue;
                     }
 
-                    var item = Packages.Items.Add(Path.GetFileName(directory), "package");
+                    var item = Packages.Items.Add(packageName, "package");
 
-                    item.SubItems.Add(match.Groups["version"].Value);
+                    item.SubItems.Add("-");
                     item.SubItems.Add(directory.Substring(root.Length + 1));
 
-                    item.Tag = new Package(item, msbuildPath, new SemanticVersion(match.Groups["version"].Value));
+                    item.Tag = new Package(item, projectPath, msbuildPath, new SemanticVersion(match.Groups["version"].Value));
                 }
                 finally
                 {
@@ -129,6 +195,11 @@ namespace Shuttle.Packager
                 item.ImageKey = @"hourglass";
 
                 Execute(item.Package(), target);
+
+                if (!target.Equals("build", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    item.Package().ApplyBuildVersion();
+                }
             }
 
             BuildButton.Enabled = true;

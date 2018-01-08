@@ -6,16 +6,20 @@ namespace Shuttle.Packager
     {
         private readonly ListViewItem _item;
 
-        public Package(ListViewItem item, string msbuildPath, SemanticVersion currentVersion)
+        public Package(ListViewItem item, string projectPath, string msbuildPath, SemanticVersion currentVersion)
         {
             _item = item;
+            ProjectPath = projectPath;
             CurrentVersion = currentVersion;
             BuildVersion = CurrentVersion.Copy();
             MSBuildPath = msbuildPath;
+
+            RenderVersion();
         }
 
         public string Name => _item.Text;
-        public SemanticVersion CurrentVersion { get; }
+        public string ProjectPath { get; }
+        public SemanticVersion CurrentVersion { get; private set; }
         public SemanticVersion BuildVersion { get; private set; }
         public string MSBuildPath { get; }
         public string BuildLog { get; private set; }
@@ -64,6 +68,13 @@ namespace Shuttle.Packager
         public void CaptureBuildLog(string text)
         {
             BuildLog = text;
+        }
+
+        public void ApplyBuildVersion()
+        {
+            CurrentVersion = BuildVersion.Copy();
+
+            RenderVersion();
         }
     }
 }
