@@ -49,7 +49,7 @@ namespace Shuttle.Packager
                         continue;
                     }
 
-                    var item = Packages.Items.Add(Path.GetFileName(directory));
+                    var item = Packages.Items.Add(Path.GetFileName(directory), "package");
 
                     item.SubItems.Add(match.Groups["version"].Value);
                     item.SubItems.Add(directory.Substring(root.Length + 1));
@@ -115,14 +115,25 @@ namespace Shuttle.Packager
 
         private void BuildButton_Click(object sender, EventArgs e)
         {
+            Build("build");
+        }
+
+        private void Build(string target)
+        {
             BuildButton.Enabled = false;
+            PackageButton.Enabled = false;
+            ReleaseButton.Enabled = false;
 
             foreach (ListViewItem item in Packages.CheckedItems)
             {
-                Execute(item.Package(), "build");
+                item.ImageKey = @"hourglass";
+
+                Execute(item.Package(), target);
             }
 
             BuildButton.Enabled = true;
+            PackageButton.Enabled = true;
+            ReleaseButton.Enabled = true;
         }
 
         private void Execute(Package package, string target)
@@ -171,6 +182,27 @@ namespace Shuttle.Packager
             process.CancelOutputRead();
 
             package.CaptureBuildLog(BuildLog.Text);
+        }
+
+        private void PackageButton_Click(object sender, EventArgs e)
+        {
+            Build("package");
+        }
+
+        private void ReleaseButton_Click(object sender, EventArgs e)
+        {
+            Build(string.Empty);
+        }
+
+        private void Packages_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (Packages.FocusedItem.Bounds.Contains(e.Location))
+                {
+                    PackageContextMenu.Show(Cursor.Position);
+                }
+            }
         }
     }
 }

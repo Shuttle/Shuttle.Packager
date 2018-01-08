@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PackagerView));
             this.label1 = new System.Windows.Forms.Label();
             this.Folder = new System.Windows.Forms.TextBox();
             this.FolderButton = new System.Windows.Forms.Button();
@@ -44,11 +46,17 @@
             this.PackageNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.VersionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LocationColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ImageList = new System.Windows.Forms.ImageList(this.components);
             this.BuildLogTab = new System.Windows.Forms.TabPage();
             this.BuildLog = new System.Windows.Forms.TextBox();
+            this.PackageButton = new System.Windows.Forms.Button();
+            this.ReleaseButton = new System.Windows.Forms.Button();
+            this.PackageContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.UpdateUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
+            this.PackageContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -185,9 +193,11 @@
             this.Packages.Location = new System.Drawing.Point(3, 3);
             this.Packages.Name = "Packages";
             this.Packages.Size = new System.Drawing.Size(846, 425);
+            this.Packages.SmallImageList = this.ImageList;
             this.Packages.TabIndex = 1;
             this.Packages.UseCompatibleStateImageBehavior = false;
             this.Packages.View = System.Windows.Forms.View.Details;
+            this.Packages.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Packages_MouseClick);
             // 
             // PackageNameColumn
             // 
@@ -203,6 +213,15 @@
             // LocationColumn
             // 
             this.LocationColumn.Width = 200;
+            // 
+            // ImageList
+            // 
+            this.ImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ImageList.ImageStream")));
+            this.ImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.ImageList.Images.SetKeyName(0, "hourglass");
+            this.ImageList.Images.SetKeyName(1, "tick");
+            this.ImageList.Images.SetKeyName(2, "cross");
+            this.ImageList.Images.SetKeyName(3, "package");
             // 
             // BuildLogTab
             // 
@@ -227,11 +246,49 @@
             this.BuildLog.Size = new System.Drawing.Size(846, 425);
             this.BuildLog.TabIndex = 0;
             // 
+            // PackageButton
+            // 
+            this.PackageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.PackageButton.Location = new System.Drawing.Point(660, 620);
+            this.PackageButton.Name = "PackageButton";
+            this.PackageButton.Size = new System.Drawing.Size(100, 40);
+            this.PackageButton.TabIndex = 12;
+            this.PackageButton.Text = "Package";
+            this.PackageButton.UseVisualStyleBackColor = true;
+            this.PackageButton.Click += new System.EventHandler(this.PackageButton_Click);
+            // 
+            // ReleaseButton
+            // 
+            this.ReleaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ReleaseButton.Location = new System.Drawing.Point(540, 620);
+            this.ReleaseButton.Name = "ReleaseButton";
+            this.ReleaseButton.Size = new System.Drawing.Size(100, 40);
+            this.ReleaseButton.TabIndex = 13;
+            this.ReleaseButton.Text = "Release";
+            this.ReleaseButton.UseVisualStyleBackColor = true;
+            this.ReleaseButton.Click += new System.EventHandler(this.ReleaseButton_Click);
+            // 
+            // PackageContextMenu
+            // 
+            this.PackageContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.PackageContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.UpdateUsagesMenuItem});
+            this.PackageContextMenu.Name = "ItemContextMenu";
+            this.PackageContextMenu.Size = new System.Drawing.Size(177, 56);
+            // 
+            // UpdateUsagesMenuItem
+            // 
+            this.UpdateUsagesMenuItem.Name = "UpdateUsagesMenuItem";
+            this.UpdateUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.UpdateUsagesMenuItem.Text = "Update usages";
+            // 
             // PackagerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(905, 679);
+            this.Controls.Add(this.ReleaseButton);
+            this.Controls.Add(this.PackageButton);
             this.Controls.Add(this.PackageTabs);
             this.Controls.Add(this.ResetButton);
             this.Controls.Add(this.PatchButton);
@@ -249,6 +306,7 @@
             this.PackageTab.ResumeLayout(false);
             this.BuildLogTab.ResumeLayout(false);
             this.BuildLogTab.PerformLayout();
+            this.PackageContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -273,6 +331,11 @@
         private System.Windows.Forms.ColumnHeader LocationColumn;
         private System.Windows.Forms.TabPage BuildLogTab;
         private System.Windows.Forms.TextBox BuildLog;
+        private System.Windows.Forms.Button PackageButton;
+        private System.Windows.Forms.Button ReleaseButton;
+        private System.Windows.Forms.ImageList ImageList;
+        private System.Windows.Forms.ContextMenuStrip PackageContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem UpdateUsagesMenuItem;
     }
 }
 
