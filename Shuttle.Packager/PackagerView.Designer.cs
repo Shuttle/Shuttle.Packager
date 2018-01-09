@@ -53,6 +53,9 @@
             this.ReleaseButton = new System.Windows.Forms.Button();
             this.PackageContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.UpdateUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -198,6 +201,7 @@
             this.Packages.UseCompatibleStateImageBehavior = false;
             this.Packages.View = System.Windows.Forms.View.Details;
             this.Packages.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Packages_MouseClick);
+            this.Packages.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Packages_MouseDoubleClick);
             // 
             // PackageNameColumn
             // 
@@ -274,15 +278,35 @@
             // 
             this.PackageContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.PackageContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.UpdateUsagesMenuItem});
+            this.UpdateUsagesMenuItem,
+            this.ShowLogMenuItem,
+            this.toolStripSeparator1,
+            this.OpenMenuItem});
             this.PackageContextMenu.Name = "ItemContextMenu";
-            this.PackageContextMenu.Size = new System.Drawing.Size(177, 28);
+            this.PackageContextMenu.Size = new System.Drawing.Size(177, 82);
             // 
             // UpdateUsagesMenuItem
             // 
             this.UpdateUsagesMenuItem.Name = "UpdateUsagesMenuItem";
             this.UpdateUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
-            this.UpdateUsagesMenuItem.Text = "Update usages";
+            this.UpdateUsagesMenuItem.Text = "&Update usages";
+            // 
+            // ShowLogMenuItem
+            // 
+            this.ShowLogMenuItem.Name = "ShowLogMenuItem";
+            this.ShowLogMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.ShowLogMenuItem.Text = "Show &log";
+            // 
+            // OpenMenuItem
+            // 
+            this.OpenMenuItem.Name = "OpenMenuItem";
+            this.OpenMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.OpenMenuItem.Text = "&Open";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
             // 
             // PackagerView
             // 
@@ -338,6 +362,9 @@
         private System.Windows.Forms.ImageList ImageList;
         private System.Windows.Forms.ContextMenuStrip PackageContextMenu;
         private System.Windows.Forms.ToolStripMenuItem UpdateUsagesMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ShowLogMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem OpenMenuItem;
     }
 }
 

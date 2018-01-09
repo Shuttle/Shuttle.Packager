@@ -1,12 +1,17 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Shuttle.Packager
 {
     internal class Package
     {
         private readonly ListViewItem _item;
+        private string _solutionPath;
 
-        public Package(ListViewItem item, string projectPath, string msbuildPath, SemanticVersion currentVersion)
+        public Package(ListViewItem item, string projectPath, string msbuildPath,
+            SemanticVersion currentVersion)
         {
             _item = item;
             ProjectPath = projectPath;
@@ -81,6 +86,41 @@ namespace Shuttle.Packager
         public bool HasFailed()
         {
             return !BuildLog.ToLower().Contains("build succeeded.");
+        }
+
+        public string GetSolutionPath()
+        {
+            var path = Path.GetDirectoryName(ProjectPath);
+
+            while (string.IsNullOrEmpty(_solutionPath))
+            {
+                if (path == null)
+                {
+                    return string.Empty;
+                }
+
+                var files = Directory.GetFiles(path, "*.sln");
+
+                if (files.Any())
+                {
+                    _solutionPath = files[0];
+                    break;
+                }
+
+                path = Path.GetDirectoryName(path);
+            }
+
+            return _solutionPath;
+        }
+
+        public void OpenSolution()
+        {
+            if (string.IsNullOrEmpty(GetSolutionPath()))
+            {
+                return;
+            }
+
+            Process.Start(GetSolutionPath());
         }
     }
 }

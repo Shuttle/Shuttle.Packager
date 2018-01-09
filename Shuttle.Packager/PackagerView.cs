@@ -26,6 +26,8 @@ namespace Shuttle.Packager
             FetchPackages(Folder.Text);
 
             UpdateUsagesMenuItem.Click += UpdateUsages;
+            ShowLogMenuItem.Click += ShowLog;
+            OpenMenuItem.Click += Open;
 
             var doubleBuffered =
                 typeof(Control).GetProperty(
@@ -37,6 +39,26 @@ namespace Shuttle.Packager
             {
                 doubleBuffered.SetValue(BuildLog, true, null);
             }
+        }
+
+        private void Open(object sender, EventArgs e)
+        {
+            Packages.FocusedItem?.Package().OpenSolution();
+        }
+
+        private void ShowLog(object sender, EventArgs e)
+        {
+            if (Packages.FocusedItem == null)
+            {
+                return;
+            }
+
+            var package = Packages.FocusedItem.Package();
+
+            BuildLog.SelectionLength = 0;
+            BuildLog.Text = package.BuildLog;
+            PackageTabs.SelectTab(BuildLogTab);
+            BuildLogTab.Text = package.Name;
         }
 
         private void UpdateUsages(object sender, EventArgs e)
@@ -130,7 +152,11 @@ namespace Shuttle.Packager
 
                 try
                 {
-                    if (!File.Exists(msbuildPath) || !File.Exists(assemblyInfoPath) || !File.Exists(projectPath))
+                    if (!File.Exists(msbuildPath) 
+                        || 
+                        !File.Exists(assemblyInfoPath) 
+                        || 
+                        !File.Exists(projectPath))
                     {
                         continue;
                     }
@@ -248,7 +274,6 @@ namespace Shuttle.Packager
         private void Execute(Package package, string target)
         {
             BuildLog.Text = string.Empty;
-
             PackageTabs.SelectTab(BuildLogTab);
             BuildLogTab.Text = package.Name;
 
@@ -312,6 +337,16 @@ namespace Shuttle.Packager
                     PackageContextMenu.Show(Cursor.Position);
                 }
             }
+        }
+
+        private void Packages_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (!Packages.FocusedItem.Bounds.Contains(e.Location))
+            {
+                return;
+            }
+
+            Packages.FocusedItem.Package().OpenSolution();
         }
     }
 }
