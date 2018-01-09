@@ -13,6 +13,7 @@ namespace Shuttle.Packager
             CurrentVersion = currentVersion;
             BuildVersion = CurrentVersion.Copy();
             MSBuildPath = msbuildPath;
+            BuildLog = string.Empty;
 
             RenderVersion();
         }
@@ -75,6 +76,11 @@ namespace Shuttle.Packager
             CurrentVersion = BuildVersion.Copy();
 
             RenderVersion();
+        }
+
+        public bool HasFailed()
+        {
+            return !BuildLog.ToLower().Contains("build succeeded.");
         }
     }
 }

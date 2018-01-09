@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -12,8 +13,11 @@ namespace Shuttle.Packager
     {
         private readonly Regex _assemblyVersionExpression =
             new Regex(@"AssemblyVersion\s*\(\s*""(?<version>.*)""\s*\)", RegexOptions.IgnoreCase);
+
         private readonly Regex _packageVersionExpression =
-            new Regex(@"<PackageReference\s*Include=""(?<package>.*?)""\s*Version=""(?<version>(?<major>\d*)\.(?<minor>\d*)\.(?<patch>\d*))""\s*/>", RegexOptions.IgnoreCase);
+            new Regex(
+                @"<PackageReference\s*Include=""(?<package>.*?)""\s*Version=""(?<version>(?<major>\d*)\.(?<minor>\d*)\.(?<patch>\d*))""\s*/>",
+                RegexOptions.IgnoreCase);
 
         public PackagerView()
         {
@@ -22,6 +26,17 @@ namespace Shuttle.Packager
             FetchPackages(Folder.Text);
 
             UpdateUsagesMenuItem.Click += UpdateUsages;
+
+            var doubleBuffered =
+                typeof(Control).GetProperty(
+                    "DoubleBuffered",
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance);
+
+            if (doubleBuffered != null)
+            {
+                doubleBuffered.SetValue(BuildLog, true, null);
+            }
         }
 
         private void UpdateUsages(object sender, EventArgs e)
@@ -54,31 +69,43 @@ namespace Shuttle.Packager
 
                 foreach (Match match in matches)
                 {
-                    if (match.Groups["package"].Value.Equals(package.Name, 
+                    if (!match.Groups["package"].Value.Equals(package.Name,
                             StringComparison.CurrentCultureIgnoreCase)
-                        &&
-                        !match.Groups["version"].Value.Equals(package.CurrentVersion.Formatted(),
+                        || match.Groups["version"].Value.Equals(
+                            package.CurrentVersion.Formatted(),
                             StringComparison.InvariantCultureIgnoreCase))
                     {
-                        found = true;
-                        break;
+                        continue;
                     }
+
+                    found = true;
+                    break;
                 }
 
                 if (found)
                 {
+                    FindItem(item.Package().Name).Checked = true;
+
                     log.AppendLine(item.Package().Name);
                 }
             }
 
             if (log.Length > 0)
             {
-                File.WriteAllText(Path.Combine(logFolder, $"{package.Name}-{package.CurrentVersion.Formatted()}-usages.log"), log.ToString());
+                File.WriteAllText(
+                    Path.Combine(logFolder, $"{package.Name}-{package.CurrentVersion.Formatted()}-usages.log"),
+                    log.ToString());
             }
             else
             {
                 MessageBox.Show(@"No usages found that require an update.");
             }
+        }
+
+        private ListViewItem FindItem(string name)
+        {
+            return Packages.Items.Cast<ListViewItem>().FirstOrDefault(item =>
+                item.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private void FetchPackages(string folder)
@@ -115,12 +142,13 @@ namespace Shuttle.Packager
                         continue;
                     }
 
-                    var item = Packages.Items.Add(packageName, "package");
+                    var item = Packages.Items.Add(packageName, packageName, "package");
 
                     item.SubItems.Add("-");
                     item.SubItems.Add(directory.Substring(root.Length + 1));
 
-                    item.Tag = new Package(item, projectPath, msbuildPath, new SemanticVersion(match.Groups["version"].Value));
+                    item.Tag = new Package(item, projectPath, msbuildPath,
+                        new SemanticVersion(match.Groups["version"].Value));
                 }
                 finally
                 {
@@ -199,6 +227,16 @@ namespace Shuttle.Packager
                 if (!target.Equals("build", StringComparison.InvariantCultureIgnoreCase))
                 {
                     item.Package().ApplyBuildVersion();
+                }
+
+                if (item.Package().HasFailed())
+                {
+                    item.ImageKey = @"cross";
+                }
+                else
+                {
+                    item.ImageKey = @"tick";
+                    item.Checked = false;
                 }
             }
 
