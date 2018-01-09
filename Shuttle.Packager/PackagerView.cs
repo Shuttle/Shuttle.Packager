@@ -80,14 +80,14 @@ namespace Shuttle.Packager
 
             foreach (ListViewItem item in Packages.Items)
             {
-                var matches = _packageVersionExpression.Matches(File.ReadAllText(item.Package().ProjectPath));
+                var dependentPackage = item.Package();
+                var content = File.ReadAllText(dependentPackage.ProjectPath);
+                var matches = _packageVersionExpression.Matches(content);
 
                 if (matches.Count == 0)
                 {
                     continue;
                 }
-
-                var found = false;
 
                 foreach (Match match in matches)
                 {
@@ -100,15 +100,15 @@ namespace Shuttle.Packager
                         continue;
                     }
 
-                    found = true;
+                    FindItem(dependentPackage.Name).Checked = true;
+
+                    var updatedContent = content.Substring(0, match.Index) + $@"<PackageReference Include=""{package.Name}"" Version=""{package.CurrentVersion.Formatted()}"" />" + content.Substring(match.Index + match.Length);
+
+                    File.WriteAllText(dependentPackage.ProjectPath, updatedContent);
+
+                    log.AppendLine(dependentPackage.Name);
+
                     break;
-                }
-
-                if (found)
-                {
-                    FindItem(item.Package().Name).Checked = true;
-
-                    log.AppendLine(item.Package().Name);
                 }
             }
 
