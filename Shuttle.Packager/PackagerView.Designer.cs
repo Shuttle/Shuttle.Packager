@@ -53,10 +53,12 @@
             this.ReleaseButton = new System.Windows.Forms.Button();
             this.PackageContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.UpdateUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FindUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ShowLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.FindUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InvertButton = new System.Windows.Forms.Button();
+            this.ClearButton = new System.Windows.Forms.Button();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -285,13 +287,19 @@
             this.toolStripSeparator1,
             this.OpenMenuItem});
             this.PackageContextMenu.Name = "ItemContextMenu";
-            this.PackageContextMenu.Size = new System.Drawing.Size(177, 134);
+            this.PackageContextMenu.Size = new System.Drawing.Size(177, 106);
             // 
             // UpdateUsagesMenuItem
             // 
             this.UpdateUsagesMenuItem.Name = "UpdateUsagesMenuItem";
             this.UpdateUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
             this.UpdateUsagesMenuItem.Text = "&Update usages";
+            // 
+            // FindUsagesMenuItem
+            // 
+            this.FindUsagesMenuItem.Name = "FindUsagesMenuItem";
+            this.FindUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.FindUsagesMenuItem.Text = "&Find usages";
             // 
             // ShowLogMenuItem
             // 
@@ -310,17 +318,33 @@
             this.OpenMenuItem.Size = new System.Drawing.Size(176, 24);
             this.OpenMenuItem.Text = "&Open";
             // 
-            // FindUsagesMenuItem
+            // InvertButton
             // 
-            this.FindUsagesMenuItem.Name = "FindUsagesMenuItem";
-            this.FindUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
-            this.FindUsagesMenuItem.Text = "&Find usages";
+            this.InvertButton.Location = new System.Drawing.Point(20, 80);
+            this.InvertButton.Name = "InvertButton";
+            this.InvertButton.Size = new System.Drawing.Size(100, 40);
+            this.InvertButton.TabIndex = 14;
+            this.InvertButton.Text = "Invert";
+            this.InvertButton.UseVisualStyleBackColor = true;
+            this.InvertButton.Click += new System.EventHandler(this.InvertButton_Click);
+            // 
+            // ClearButton
+            // 
+            this.ClearButton.Location = new System.Drawing.Point(140, 80);
+            this.ClearButton.Name = "ClearButton";
+            this.ClearButton.Size = new System.Drawing.Size(100, 40);
+            this.ClearButton.TabIndex = 15;
+            this.ClearButton.Text = "Clear";
+            this.ClearButton.UseVisualStyleBackColor = true;
+            this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // PackagerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(905, 679);
+            this.Controls.Add(this.ClearButton);
+            this.Controls.Add(this.InvertButton);
             this.Controls.Add(this.ReleaseButton);
             this.Controls.Add(this.PackageButton);
             this.Controls.Add(this.PackageTabs);
@@ -374,6 +398,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem OpenMenuItem;
         private System.Windows.Forms.ToolStripMenuItem FindUsagesMenuItem;
+        private System.Windows.Forms.Button InvertButton;
+        private System.Windows.Forms.Button ClearButton;
     }
 }
 

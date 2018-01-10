@@ -332,16 +332,21 @@ namespace Shuttle.Packager
             PackageTabs.SelectTab(BuildLogTab);
             BuildLogTab.Text = package.Name;
 
+            Restore(package);
+
+            LogMessage("[build]");
+            LogMessage("");
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     WorkingDirectory = Path.GetDirectoryName(package.MSBuildPath),
-                    Arguments = "build " + Path.GetFileName(package.MSBuildPath) +
+                    Arguments = Path.GetFileName(package.MSBuildPath) +
                                 $" /p:SemanticVersion={package.BuildVersion.Formatted()}" +
                                 (!string.IsNullOrEmpty(target) ? $" /t:{target}" : string.Empty),
                     FileName =
-                        @"C:\Program Files\dotnet\dotnet.exe",
+                        @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe",
                     CreateNoWindow = true,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
@@ -354,9 +359,7 @@ namespace Shuttle.Packager
             {
                 BeginInvoke(new Action(() =>
                 {
-                    BuildLog.SelectionStart = BuildLog.TextLength;
-                    BuildLog.SelectedText = args.Data + Environment.NewLine;
-                    BuildLog.Refresh();
+                    LogMessage(args.Data);
                 }));
             };
 
@@ -371,6 +374,52 @@ namespace Shuttle.Packager
             process.CancelOutputRead();
 
             package.CaptureBuildLog(BuildLog.Text);
+        }
+
+        private void LogMessage(string message)
+        {
+            BuildLog.SelectionStart = BuildLog.TextLength;
+            BuildLog.SelectedText = message + Environment.NewLine;
+            BuildLog.Refresh();
+        }
+
+        private void Restore(Package package)
+        {
+            LogMessage("[restore]");
+            LogMessage("");
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    WorkingDirectory = Path.GetDirectoryName(package.ProjectPath),
+                    Arguments = "restore " + Path.GetFileName(package.ProjectPath),
+                    FileName = @"C:\Program Files\dotnet\dotnet.exe",
+                    CreateNoWindow = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                },
+                EnableRaisingEvents = true
+            };
+
+            process.OutputDataReceived += (sender, args) =>
+            {
+                BeginInvoke(new Action(() =>
+                {
+                    LogMessage(args.Data);
+                }));
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+
+            while (!process.HasExited)
+            {
+                Application.DoEvents();
+            }
+
+            process.CancelOutputRead();
         }
 
         private void PackageButton_Click(object sender, EventArgs e)
@@ -402,6 +451,22 @@ namespace Shuttle.Packager
             }
 
             Packages.FocusedItem.Package().OpenSolution();
+        }
+
+        private void ClearButton_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in Packages.Items)
+            {
+                item.Checked = false;
+            }
+        }
+
+        private void InvertButton_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in Packages.Items)
+            {
+                item.Checked = !item.Checked;
+            }
         }
     }
 }
