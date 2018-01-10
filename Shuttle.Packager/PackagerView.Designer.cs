@@ -54,8 +54,9 @@
             this.PackageContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.UpdateUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ShowLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FindUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -279,11 +280,12 @@
             this.PackageContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.PackageContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.UpdateUsagesMenuItem,
+            this.FindUsagesMenuItem,
             this.ShowLogMenuItem,
             this.toolStripSeparator1,
             this.OpenMenuItem});
             this.PackageContextMenu.Name = "ItemContextMenu";
-            this.PackageContextMenu.Size = new System.Drawing.Size(177, 82);
+            this.PackageContextMenu.Size = new System.Drawing.Size(177, 134);
             // 
             // UpdateUsagesMenuItem
             // 
@@ -297,16 +299,22 @@
             this.ShowLogMenuItem.Size = new System.Drawing.Size(176, 24);
             this.ShowLogMenuItem.Text = "Show &log";
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            // 
             // OpenMenuItem
             // 
             this.OpenMenuItem.Name = "OpenMenuItem";
             this.OpenMenuItem.Size = new System.Drawing.Size(176, 24);
             this.OpenMenuItem.Text = "&Open";
             // 
-            // toolStripSeparator1
+            // FindUsagesMenuItem
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            this.FindUsagesMenuItem.Name = "FindUsagesMenuItem";
+            this.FindUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.FindUsagesMenuItem.Text = "&Find usages";
             // 
             // PackagerView
             // 
@@ -365,6 +373,7 @@
         private System.Windows.Forms.ToolStripMenuItem ShowLogMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem OpenMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FindUsagesMenuItem;
     }
 }
 

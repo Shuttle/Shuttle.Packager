@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Shuttle.Packager
 {
-    internal class SemanticVersion
+    public class SemanticVersion
     {
         private readonly Regex _semverExpression =
             new Regex(@"(?<major>\d*)\.(?<minor>\d*)\.(?<patch>\d*)", RegexOptions.IgnoreCase);

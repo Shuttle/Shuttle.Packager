@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DependentPackageMatch.cs" />
     <Compile Include="ListViewItemExtensions.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="PackagerView.cs">

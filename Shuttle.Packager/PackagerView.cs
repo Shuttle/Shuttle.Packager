@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace Shuttle.Packager
             FetchPackages(Folder.Text);
 
             UpdateUsagesMenuItem.Click += UpdateUsages;
+            FindUsagesMenuItem.Click += FindUsages;
             ShowLogMenuItem.Click += ShowLog;
             OpenMenuItem.Click += Open;
 
@@ -38,6 +40,19 @@ namespace Shuttle.Packager
             if (doubleBuffered != null)
             {
                 doubleBuffered.SetValue(BuildLog, true, null);
+            }
+        }
+
+        private void FindUsages(object sender, EventArgs e)
+        {
+            if (Packages.FocusedItem == null)
+            {
+                return;
+            }
+
+            foreach (var dependentPackageMatch in FindUsages(Packages.FocusedItem.Package()))
+            {
+                dependentPackageMatch.Package.Checked = true;
             }
         }
 
@@ -61,22 +76,9 @@ namespace Shuttle.Packager
             BuildLogTab.Text = package.Name;
         }
 
-        private void UpdateUsages(object sender, EventArgs e)
+        private IEnumerable<DependentPackageMatch> FindUsages(Package package)
         {
-            if (Packages.FocusedItem == null)
-            {
-                return;
-            }
-
-            var package = Packages.FocusedItem.Package();
-            var logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-
-            if (!Directory.Exists(logFolder))
-            {
-                Directory.CreateDirectory(logFolder);
-            }
-
-            var log = new StringBuilder();
+            var result = new List<DependentPackageMatch>();
 
             foreach (ListViewItem item in Packages.Items)
             {
@@ -92,30 +94,61 @@ namespace Shuttle.Packager
                 foreach (Match match in matches)
                 {
                     if (!match.Groups["package"].Value.Equals(package.Name,
-                            StringComparison.CurrentCultureIgnoreCase)
-                        || match.Groups["version"].Value.Equals(
-                            package.CurrentVersion.Formatted(),
-                            StringComparison.InvariantCultureIgnoreCase))
+                            StringComparison.CurrentCultureIgnoreCase))
                     {
                         continue;
                     }
 
-                    FindItem(dependentPackage.Name).Checked = true;
-
-                    var updatedContent = content.Substring(0, match.Index) + $@"<PackageReference Include=""{package.Name}"" Version=""{package.CurrentVersion.Formatted()}"" />" + content.Substring(match.Index + match.Length);
-
-                    File.WriteAllText(dependentPackage.ProjectPath, updatedContent);
-
-                    log.AppendLine(dependentPackage.Name);
+                    result.Add(new DependentPackageMatch(item.Package(), match, content));
 
                     break;
                 }
             }
 
+            return result;
+        }
+
+        private void UpdateUsages(object sender, EventArgs e)
+        {
+            if (Packages.FocusedItem == null)
+            {
+                return;
+            }
+
+            var package = Packages.FocusedItem.Package();
+            var dependencies = FindUsages(package);
+
+            var logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+
+            if (!Directory.Exists(logFolder))
+            {
+                Directory.CreateDirectory(logFolder);
+            }
+
+            var log = new StringBuilder();
+
+            foreach (var dependentPackageMatch in dependencies)
+            {
+                if (dependentPackageMatch.Match.Groups["version"].Value.Equals(
+                    package.CurrentVersion.Formatted(),
+                    StringComparison.InvariantCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                dependentPackageMatch.Package.Checked = true;
+
+                var updatedContent = dependentPackageMatch.ProjectContent.Substring(0, dependentPackageMatch.Match.Index) + $@"<PackageReference Include=""{dependentPackageMatch.Package.Name}"" Version=""{dependentPackageMatch.Package.CurrentVersion.Formatted()}"" />" + dependentPackageMatch.ProjectContent.Substring(dependentPackageMatch.Match.Index + dependentPackageMatch.Match.Length);
+
+                File.WriteAllText(dependentPackageMatch.Package.ProjectPath, updatedContent);
+
+                log.AppendLine(dependentPackageMatch.Package.Name);
+            }
+
             if (log.Length > 0)
             {
                 File.WriteAllText(
-                    Path.Combine(logFolder, $"{package.Name}-{package.CurrentVersion.Formatted()}-usages.log"),
+                    Path.Combine(logFolder, $"{Packages.FocusedItem.Name}-{package.CurrentVersion.Formatted()}-usages.log"),
                     log.ToString());
             }
             else

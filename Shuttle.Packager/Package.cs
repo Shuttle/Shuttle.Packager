@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Shuttle.Packager
 {
-    internal class Package
+    public class Package
     {
         private readonly ListViewItem _item;
         private string _solutionPath;
@@ -29,6 +29,12 @@ namespace Shuttle.Packager
         public SemanticVersion BuildVersion { get; private set; }
         public string MSBuildPath { get; }
         public string BuildLog { get; private set; }
+
+        public bool Checked
+        {
+            get => _item.Checked;
+            set => _item.Checked = value;
+        }
 
         public Package IncreaseMajor()
         {
