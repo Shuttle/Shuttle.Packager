@@ -138,7 +138,7 @@ namespace Shuttle.Packager
 
                 dependentPackageMatch.Package.Checked = true;
 
-                var updatedContent = dependentPackageMatch.ProjectContent.Substring(0, dependentPackageMatch.Match.Index) + $@"<PackageReference Include=""{dependentPackageMatch.Package.Name}"" Version=""{dependentPackageMatch.Package.CurrentVersion.Formatted()}"" />" + dependentPackageMatch.ProjectContent.Substring(dependentPackageMatch.Match.Index + dependentPackageMatch.Match.Length);
+                var updatedContent = dependentPackageMatch.ProjectContent.Substring(0, dependentPackageMatch.Match.Index) + $@"<PackageReference Include=""{package.Name}"" Version=""{package.CurrentVersion.Formatted()}"" />" + dependentPackageMatch.ProjectContent.Substring(dependentPackageMatch.Match.Index + dependentPackageMatch.Match.Length);
 
                 File.WriteAllText(dependentPackageMatch.Package.ProjectPath, updatedContent);
 
@@ -236,15 +236,37 @@ namespace Shuttle.Packager
 
         private void MajorButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in Packages.CheckedItems)
+            foreach (ListViewItem item in CheckedPackages())
             {
                 item.Package().IncreaseMajor();
             }
         }
 
+        private IEnumerable<ListViewItem> CheckedPackages()
+        {
+            var result = new List<ListViewItem>();
+
+            if (Packages.CheckedItems.Count == 0 && Packages.FocusedItem != null)
+            {
+                Packages.FocusedItem.Checked = true;
+            }
+
+            foreach (ListViewItem item in Packages.Items)
+            {
+                if (!item.Checked)
+                {
+                    continue;
+                }
+
+                result.Add(item);
+            }
+
+            return result;
+        }
+
         private void MinorButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in Packages.CheckedItems)
+            foreach (ListViewItem item in CheckedPackages())
             {
                 item.Package().IncreaseMinor();
             }
@@ -252,7 +274,7 @@ namespace Shuttle.Packager
 
         private void PatchButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in Packages.CheckedItems)
+            foreach (ListViewItem item in CheckedPackages())
             {
                 item.Package().IncreasePatch();
             }
@@ -260,7 +282,7 @@ namespace Shuttle.Packager
 
         private void ResetButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in Packages.CheckedItems)
+            foreach (ListViewItem item in CheckedPackages())
             {
                 item.Package().ResetVersion();
             }
@@ -277,7 +299,7 @@ namespace Shuttle.Packager
             PackageButton.Enabled = false;
             ReleaseButton.Enabled = false;
 
-            foreach (ListViewItem item in Packages.CheckedItems)
+            foreach (ListViewItem item in CheckedPackages())
             {
                 item.ImageKey = @"hourglass";
 
@@ -315,11 +337,11 @@ namespace Shuttle.Packager
                 StartInfo = new ProcessStartInfo
                 {
                     WorkingDirectory = Path.GetDirectoryName(package.MSBuildPath),
-                    Arguments = Path.GetFileName(package.MSBuildPath) +
+                    Arguments = "build " + Path.GetFileName(package.MSBuildPath) +
                                 $" /p:SemanticVersion={package.BuildVersion.Formatted()}" +
                                 (!string.IsNullOrEmpty(target) ? $" /t:{target}" : string.Empty),
                     FileName =
-                        @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe",
+                        @"C:\Program Files\dotnet\dotnet.exe",
                     CreateNoWindow = true,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
