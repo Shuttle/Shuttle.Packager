@@ -14,5 +14,15 @@ namespace Shuttle.Packager
             Match = match;
             ProjectContent = projectContent;
         }
+
+        public void ShowUsage()
+        {
+            Package.ShowUsage(GetVersion());
+        }
+
+        public string GetVersion()
+        {
+            return Match.Groups["version"].Value;
+        }
     }
 }

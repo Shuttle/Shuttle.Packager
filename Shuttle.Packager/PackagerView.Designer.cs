@@ -45,6 +45,7 @@
             this.Packages = new System.Windows.Forms.ListView();
             this.PackageNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.VersionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.UsageColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LocationColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ImageList = new System.Windows.Forms.ImageList(this.components);
             this.BuildLogTab = new System.Windows.Forms.TabPage();
@@ -53,12 +54,15 @@
             this.ReleaseButton = new System.Windows.Forms.Button();
             this.PackageContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.UpdateUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.FindUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ShowLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.MarkUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowUsagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ShowLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InvertButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
+            this.ClearUsagesButton = new System.Windows.Forms.Button();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -191,6 +195,7 @@
             this.Packages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.PackageNameColumn,
             this.VersionColumn,
+            this.UsageColumn,
             this.LocationColumn});
             this.Packages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Packages.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -217,8 +222,14 @@
             this.VersionColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.VersionColumn.Width = 150;
             // 
+            // UsageColumn
+            // 
+            this.UsageColumn.Text = "Usage";
+            this.UsageColumn.Width = 75;
+            // 
             // LocationColumn
             // 
+            this.LocationColumn.Text = "Location";
             this.LocationColumn.Width = 200;
             // 
             // ImageList
@@ -282,12 +293,14 @@
             this.PackageContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.PackageContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.UpdateUsagesMenuItem,
-            this.FindUsagesMenuItem,
-            this.ShowLogMenuItem,
+            this.MarkUsagesMenuItem,
+            this.ShowUsagesMenuItem,
+            this.toolStripSeparator2,
+            this.OpenMenuItem,
             this.toolStripSeparator1,
-            this.OpenMenuItem});
+            this.ShowLogMenuItem});
             this.PackageContextMenu.Name = "ItemContextMenu";
-            this.PackageContextMenu.Size = new System.Drawing.Size(177, 106);
+            this.PackageContextMenu.Size = new System.Drawing.Size(177, 136);
             // 
             // UpdateUsagesMenuItem
             // 
@@ -295,28 +308,39 @@
             this.UpdateUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
             this.UpdateUsagesMenuItem.Text = "&Update usages";
             // 
-            // FindUsagesMenuItem
+            // MarkUsagesMenuItem
             // 
-            this.FindUsagesMenuItem.Name = "FindUsagesMenuItem";
-            this.FindUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
-            this.FindUsagesMenuItem.Text = "&Find usages";
+            this.MarkUsagesMenuItem.Name = "MarkUsagesMenuItem";
+            this.MarkUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.MarkUsagesMenuItem.Text = "&Mark usages";
             // 
-            // ShowLogMenuItem
+            // ShowUsagesMenuItem
             // 
-            this.ShowLogMenuItem.Name = "ShowLogMenuItem";
-            this.ShowLogMenuItem.Size = new System.Drawing.Size(176, 24);
-            this.ShowLogMenuItem.Text = "Show &log";
+            this.ShowUsagesMenuItem.Name = "ShowUsagesMenuItem";
+            this.ShowUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.ShowUsagesMenuItem.Text = "&Show usages";
             // 
-            // toolStripSeparator1
+            // toolStripSeparator2
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(173, 6);
             // 
             // OpenMenuItem
             // 
             this.OpenMenuItem.Name = "OpenMenuItem";
             this.OpenMenuItem.Size = new System.Drawing.Size(176, 24);
             this.OpenMenuItem.Text = "&Open";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            // 
+            // ShowLogMenuItem
+            // 
+            this.ShowLogMenuItem.Name = "ShowLogMenuItem";
+            this.ShowLogMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.ShowLogMenuItem.Text = "Show &log";
             // 
             // InvertButton
             // 
@@ -338,11 +362,22 @@
             this.ClearButton.UseVisualStyleBackColor = true;
             this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
+            // ClearUsagesButton
+            // 
+            this.ClearUsagesButton.Location = new System.Drawing.Point(260, 80);
+            this.ClearUsagesButton.Name = "ClearUsagesButton";
+            this.ClearUsagesButton.Size = new System.Drawing.Size(120, 40);
+            this.ClearUsagesButton.TabIndex = 16;
+            this.ClearUsagesButton.Text = "Clear usages";
+            this.ClearUsagesButton.UseVisualStyleBackColor = true;
+            this.ClearUsagesButton.Click += new System.EventHandler(this.ClearUsagesButton_Click);
+            // 
             // PackagerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(905, 679);
+            this.Controls.Add(this.ClearUsagesButton);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.InvertButton);
             this.Controls.Add(this.ReleaseButton);
@@ -386,7 +421,6 @@
         private System.Windows.Forms.ListView Packages;
         private System.Windows.Forms.ColumnHeader PackageNameColumn;
         private System.Windows.Forms.ColumnHeader VersionColumn;
-        private System.Windows.Forms.ColumnHeader LocationColumn;
         private System.Windows.Forms.TabPage BuildLogTab;
         private System.Windows.Forms.TextBox BuildLog;
         private System.Windows.Forms.Button PackageButton;
@@ -397,9 +431,14 @@
         private System.Windows.Forms.ToolStripMenuItem ShowLogMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem OpenMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem FindUsagesMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem MarkUsagesMenuItem;
         private System.Windows.Forms.Button InvertButton;
         private System.Windows.Forms.Button ClearButton;
+        private System.Windows.Forms.ColumnHeader UsageColumn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ColumnHeader LocationColumn;
+        private System.Windows.Forms.Button ClearUsagesButton;
+        private System.Windows.Forms.ToolStripMenuItem ShowUsagesMenuItem;
     }
 }
 

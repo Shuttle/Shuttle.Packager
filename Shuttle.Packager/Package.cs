@@ -65,7 +65,7 @@ namespace Shuttle.Packager
 
         private void RenderVersion()
         {
-            _item.SubItems[1].Text = CurrentVersion.IsEqualTo(BuildVersion)
+            _item.SubItems["Version"].Text = CurrentVersion.IsEqualTo(BuildVersion)
                 ? CurrentVersion.Formatted()
                 : CurrentVersion.Formatted() + " => " + BuildVersion.Formatted();
         }
@@ -127,6 +127,11 @@ namespace Shuttle.Packager
             }
 
             Process.Start(GetSolutionPath());
+        }
+
+        public void ShowUsage(string version)
+        {
+            _item.SubItems["Usage"].Text = version;
         }
     }
 }

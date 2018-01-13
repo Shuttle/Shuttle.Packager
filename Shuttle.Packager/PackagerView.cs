@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,7 +26,8 @@ namespace Shuttle.Packager
             FetchPackages(Folder.Text);
 
             UpdateUsagesMenuItem.Click += UpdateUsages;
-            FindUsagesMenuItem.Click += FindUsages;
+            MarkUsagesMenuItem.Click += (sender, e) => { FindUsages(true); };
+            ShowUsagesMenuItem.Click += (sender, e) => { FindUsages(false); };
             ShowLogMenuItem.Click += ShowLog;
             OpenMenuItem.Click += Open;
 
@@ -43,7 +43,7 @@ namespace Shuttle.Packager
             }
         }
 
-        private void FindUsages(object sender, EventArgs e)
+        private void FindUsages(bool mark)
         {
             if (Packages.FocusedItem == null)
             {
@@ -52,7 +52,12 @@ namespace Shuttle.Packager
 
             foreach (var dependentPackageMatch in FindUsages(Packages.FocusedItem.Package()))
             {
-                dependentPackageMatch.Package.Checked = true;
+                if (mark)
+                {
+                    dependentPackageMatch.Package.Checked = true;
+                }
+
+                dependentPackageMatch.ShowUsage();
             }
         }
 
@@ -78,6 +83,9 @@ namespace Shuttle.Packager
 
         private IEnumerable<DependentPackageMatch> FindUsages(Package package)
         {
+            UsageColumn.Text = package.Name;
+            UsageColumn.Width = -2;
+
             var result = new List<DependentPackageMatch>();
 
             foreach (ListViewItem item in Packages.Items)
@@ -129,7 +137,7 @@ namespace Shuttle.Packager
 
             foreach (var dependentPackageMatch in dependencies)
             {
-                if (dependentPackageMatch.Match.Groups["version"].Value.Equals(
+                if (dependentPackageMatch.GetVersion().Equals(
                     package.CurrentVersion.Formatted(),
                     StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -137,6 +145,7 @@ namespace Shuttle.Packager
                 }
 
                 dependentPackageMatch.Package.Checked = true;
+                dependentPackageMatch.ShowUsage();
 
                 var updatedContent = dependentPackageMatch.ProjectContent.Substring(0, dependentPackageMatch.Match.Index) + $@"<PackageReference Include=""{package.Name}"" Version=""{package.CurrentVersion.Formatted()}"" />" + dependentPackageMatch.ProjectContent.Substring(dependentPackageMatch.Match.Index + dependentPackageMatch.Match.Length);
 
@@ -155,12 +164,6 @@ namespace Shuttle.Packager
             {
                 MessageBox.Show(@"No usages found that require an update.");
             }
-        }
-
-        private ListViewItem FindItem(string name)
-        {
-            return Packages.Items.Cast<ListViewItem>().FirstOrDefault(item =>
-                item.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         private void FetchPackages(string folder)
@@ -203,8 +206,9 @@ namespace Shuttle.Packager
 
                     var item = Packages.Items.Add(packageName, packageName, "package");
 
-                    item.SubItems.Add("-");
-                    item.SubItems.Add(directory.Substring(root.Length + 1));
+                    item.SubItems.Add("-").Name = @"Version";
+                    item.SubItems.Add(string.Empty).Name = @"Usage";
+                    item.SubItems.Add(directory.Substring(root.Length + 1)).Name = @"Location";
 
                     item.Tag = new Package(item, projectPath, msbuildPath,
                         new SemanticVersion(match.Groups["version"].Value));
@@ -466,6 +470,21 @@ namespace Shuttle.Packager
             foreach (ListViewItem item in Packages.Items)
             {
                 item.Checked = !item.Checked;
+            }
+        }
+
+        private void ClearUsagesButton_Click(object sender, EventArgs e)
+        {
+            ClearUsages();
+        }
+
+        private void ClearUsages()
+        {
+            UsageColumn.Text = @"Usages";
+
+            foreach (ListViewItem item in Packages.Items)
+            {
+                item.SubItems["Usage"].Text = string.Empty;
             }
         }
     }
