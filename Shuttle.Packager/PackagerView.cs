@@ -30,6 +30,7 @@ namespace Shuttle.Packager
             ShowUsagesMenuItem.Click += (sender, e) => { FindUsages(false); };
             ShowLogMenuItem.Click += ShowLog;
             OpenMenuItem.Click += Open;
+            RemoveFromNugetCacheMenuItem.Click += RemoveFromNugetCache;
 
             var doubleBuffered =
                 typeof(Control).GetProperty(
@@ -40,6 +41,30 @@ namespace Shuttle.Packager
             if (doubleBuffered != null)
             {
                 doubleBuffered.SetValue(BuildLog, true, null);
+            }
+        }
+
+        private void RemoveFromNugetCache(object sender, EventArgs e)
+        {
+            if (Packages.FocusedItem == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var path = $@"{Environment.ExpandEnvironmentVariables("%UserProfile%")}\.nuget\packages\{Packages.FocusedItem.Package().Name}";
+
+                if (!Directory.Exists(path))
+                {
+                    return;
+                }
+
+                Directory.Delete(path, true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, @"Remove from Nuget cache", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -102,7 +127,7 @@ namespace Shuttle.Packager
                 foreach (Match match in matches)
                 {
                     if (!match.Groups["package"].Value.Equals(package.Name,
-                            StringComparison.CurrentCultureIgnoreCase))
+                        StringComparison.CurrentCultureIgnoreCase))
                     {
                         continue;
                     }
@@ -147,7 +172,12 @@ namespace Shuttle.Packager
                 dependentPackageMatch.Package.Checked = true;
                 dependentPackageMatch.ShowUsage();
 
-                var updatedContent = dependentPackageMatch.ProjectContent.Substring(0, dependentPackageMatch.Match.Index) + $@"<PackageReference Include=""{package.Name}"" Version=""{package.CurrentVersion.Formatted()}"" />" + dependentPackageMatch.ProjectContent.Substring(dependentPackageMatch.Match.Index + dependentPackageMatch.Match.Length);
+                var updatedContent =
+                    dependentPackageMatch.ProjectContent.Substring(0, dependentPackageMatch.Match.Index) +
+                    $@"<PackageReference Include=""{package.Name}"" Version=""{
+                            package.CurrentVersion.Formatted()
+                        }"" />" + dependentPackageMatch.ProjectContent.Substring(
+                        dependentPackageMatch.Match.Index + dependentPackageMatch.Match.Length);
 
                 File.WriteAllText(dependentPackageMatch.Package.ProjectPath, updatedContent);
 
@@ -157,7 +187,8 @@ namespace Shuttle.Packager
             if (log.Length > 0)
             {
                 File.WriteAllText(
-                    Path.Combine(logFolder, $"{Packages.FocusedItem.Name}-{package.CurrentVersion.Formatted()}-usages.log"),
+                    Path.Combine(logFolder,
+                        $"{Packages.FocusedItem.Name}-{package.CurrentVersion.Formatted()}-usages.log"),
                     log.ToString());
             }
             else
@@ -188,10 +219,10 @@ namespace Shuttle.Packager
 
                 try
                 {
-                    if (!File.Exists(msbuildPath) 
-                        || 
-                        !File.Exists(assemblyInfoPath) 
-                        || 
+                    if (!File.Exists(msbuildPath)
+                        ||
+                        !File.Exists(assemblyInfoPath)
+                        ||
                         !File.Exists(projectPath))
                     {
                         continue;
@@ -240,7 +271,7 @@ namespace Shuttle.Packager
 
         private void MajorButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in CheckedPackages())
+            foreach (var item in CheckedPackages())
             {
                 item.Package().IncreaseMajor();
             }
@@ -270,7 +301,7 @@ namespace Shuttle.Packager
 
         private void MinorButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in CheckedPackages())
+            foreach (var item in CheckedPackages())
             {
                 item.Package().IncreaseMinor();
             }
@@ -278,7 +309,7 @@ namespace Shuttle.Packager
 
         private void PatchButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in CheckedPackages())
+            foreach (var item in CheckedPackages())
             {
                 item.Package().IncreasePatch();
             }
@@ -286,7 +317,7 @@ namespace Shuttle.Packager
 
         private void ResetButton_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in CheckedPackages())
+            foreach (var item in CheckedPackages())
             {
                 item.Package().ResetVersion();
             }
@@ -303,7 +334,7 @@ namespace Shuttle.Packager
             PackageButton.Enabled = false;
             ReleaseButton.Enabled = false;
 
-            foreach (ListViewItem item in CheckedPackages())
+            foreach (var item in CheckedPackages())
             {
                 item.ImageKey = @"hourglass";
 
@@ -361,10 +392,7 @@ namespace Shuttle.Packager
 
             process.OutputDataReceived += (sender, args) =>
             {
-                BeginInvoke(new Action(() =>
-                {
-                    LogMessage(args.Data);
-                }));
+                BeginInvoke(new Action(() => { LogMessage(args.Data); }));
             };
 
             process.Start();
@@ -409,10 +437,7 @@ namespace Shuttle.Packager
 
             process.OutputDataReceived += (sender, args) =>
             {
-                BeginInvoke(new Action(() =>
-                {
-                    LogMessage(args.Data);
-                }));
+                BeginInvoke(new Action(() => { LogMessage(args.Data); }));
             };
 
             process.Start();

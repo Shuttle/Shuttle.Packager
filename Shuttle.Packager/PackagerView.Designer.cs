@@ -63,6 +63,8 @@
             this.InvertButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             this.ClearUsagesButton = new System.Windows.Forms.Button();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.RemoveFromNugetCacheMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -298,48 +300,50 @@
             this.toolStripSeparator2,
             this.OpenMenuItem,
             this.toolStripSeparator1,
+            this.RemoveFromNugetCacheMenuItem,
+            this.toolStripSeparator3,
             this.ShowLogMenuItem});
             this.PackageContextMenu.Name = "ItemContextMenu";
-            this.PackageContextMenu.Size = new System.Drawing.Size(177, 136);
+            this.PackageContextMenu.Size = new System.Drawing.Size(256, 194);
             // 
             // UpdateUsagesMenuItem
             // 
             this.UpdateUsagesMenuItem.Name = "UpdateUsagesMenuItem";
-            this.UpdateUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.UpdateUsagesMenuItem.Size = new System.Drawing.Size(255, 24);
             this.UpdateUsagesMenuItem.Text = "&Update usages";
             // 
             // MarkUsagesMenuItem
             // 
             this.MarkUsagesMenuItem.Name = "MarkUsagesMenuItem";
-            this.MarkUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.MarkUsagesMenuItem.Size = new System.Drawing.Size(255, 24);
             this.MarkUsagesMenuItem.Text = "&Mark usages";
             // 
             // ShowUsagesMenuItem
             // 
             this.ShowUsagesMenuItem.Name = "ShowUsagesMenuItem";
-            this.ShowUsagesMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.ShowUsagesMenuItem.Size = new System.Drawing.Size(255, 24);
             this.ShowUsagesMenuItem.Text = "&Show usages";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(252, 6);
             // 
             // OpenMenuItem
             // 
             this.OpenMenuItem.Name = "OpenMenuItem";
-            this.OpenMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.OpenMenuItem.Size = new System.Drawing.Size(255, 24);
             this.OpenMenuItem.Text = "&Open";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(252, 6);
             // 
             // ShowLogMenuItem
             // 
             this.ShowLogMenuItem.Name = "ShowLogMenuItem";
-            this.ShowLogMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.ShowLogMenuItem.Size = new System.Drawing.Size(255, 24);
             this.ShowLogMenuItem.Text = "Show &log";
             // 
             // InvertButton
@@ -371,6 +375,17 @@
             this.ClearUsagesButton.Text = "Clear usages";
             this.ClearUsagesButton.UseVisualStyleBackColor = true;
             this.ClearUsagesButton.Click += new System.EventHandler(this.ClearUsagesButton_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(252, 6);
+            // 
+            // RemoveFromNugetCacheMenuItem
+            // 
+            this.RemoveFromNugetCacheMenuItem.Name = "RemoveFromNugetCacheMenuItem";
+            this.RemoveFromNugetCacheMenuItem.Size = new System.Drawing.Size(255, 24);
+            this.RemoveFromNugetCacheMenuItem.Text = "&Remove from Nuget cache";
             // 
             // PackagerView
             // 
@@ -439,6 +454,8 @@
         private System.Windows.Forms.ColumnHeader LocationColumn;
         private System.Windows.Forms.Button ClearUsagesButton;
         private System.Windows.Forms.ToolStripMenuItem ShowUsagesMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RemoveFromNugetCacheMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 
