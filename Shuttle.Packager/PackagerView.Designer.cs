@@ -59,12 +59,13 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.RemoveFromNugetCacheMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.ShowLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InvertButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             this.ClearUsagesButton = new System.Windows.Forms.Button();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.RemoveFromNugetCacheMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GitHubMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -299,12 +300,13 @@
             this.ShowUsagesMenuItem,
             this.toolStripSeparator2,
             this.OpenMenuItem,
+            this.GitHubMenuItem,
             this.toolStripSeparator1,
             this.RemoveFromNugetCacheMenuItem,
             this.toolStripSeparator3,
             this.ShowLogMenuItem});
             this.PackageContextMenu.Name = "ItemContextMenu";
-            this.PackageContextMenu.Size = new System.Drawing.Size(256, 194);
+            this.PackageContextMenu.Size = new System.Drawing.Size(256, 218);
             // 
             // UpdateUsagesMenuItem
             // 
@@ -339,6 +341,17 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(252, 6);
+            // 
+            // RemoveFromNugetCacheMenuItem
+            // 
+            this.RemoveFromNugetCacheMenuItem.Name = "RemoveFromNugetCacheMenuItem";
+            this.RemoveFromNugetCacheMenuItem.Size = new System.Drawing.Size(255, 24);
+            this.RemoveFromNugetCacheMenuItem.Text = "&Remove from Nuget cache";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(252, 6);
             // 
             // ShowLogMenuItem
             // 
@@ -376,16 +389,11 @@
             this.ClearUsagesButton.UseVisualStyleBackColor = true;
             this.ClearUsagesButton.Click += new System.EventHandler(this.ClearUsagesButton_Click);
             // 
-            // toolStripSeparator3
+            // GitHubMenuItem
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(252, 6);
-            // 
-            // RemoveFromNugetCacheMenuItem
-            // 
-            this.RemoveFromNugetCacheMenuItem.Name = "RemoveFromNugetCacheMenuItem";
-            this.RemoveFromNugetCacheMenuItem.Size = new System.Drawing.Size(255, 24);
-            this.RemoveFromNugetCacheMenuItem.Text = "&Remove from Nuget cache";
+            this.GitHubMenuItem.Name = "GitHubMenuItem";
+            this.GitHubMenuItem.Size = new System.Drawing.Size(255, 24);
+            this.GitHubMenuItem.Text = "GitHub";
             // 
             // PackagerView
             // 
@@ -456,6 +464,7 @@
         private System.Windows.Forms.ToolStripMenuItem ShowUsagesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem RemoveFromNugetCacheMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem GitHubMenuItem;
     }
 }
 

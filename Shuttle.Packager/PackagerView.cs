@@ -30,6 +30,7 @@ namespace Shuttle.Packager
             ShowUsagesMenuItem.Click += (sender, e) => { FindUsages(false); };
             ShowLogMenuItem.Click += ShowLog;
             OpenMenuItem.Click += Open;
+            GitHubMenuItem.Click += GitHub;
             RemoveFromNugetCacheMenuItem.Click += RemoveFromNugetCache;
 
             var doubleBuffered =
@@ -89,6 +90,16 @@ namespace Shuttle.Packager
         private void Open(object sender, EventArgs e)
         {
             Packages.FocusedItem?.Package().OpenSolution();
+        }
+
+        private void GitHub(object sender, EventArgs e)
+        {
+            if (Packages.FocusedItem == null)
+            {
+                return;
+            }
+
+            Process.Start($"https://github.com/Shuttle/{Packages.FocusedItem.Package().Name}");
         }
 
         private void ShowLog(object sender, EventArgs e)
