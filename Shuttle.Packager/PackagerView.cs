@@ -341,35 +341,44 @@ namespace Shuttle.Packager
 
         private void Build(string target)
         {
-            BuildButton.Enabled = false;
-            PackageButton.Enabled = false;
-            ReleaseButton.Enabled = false;
-
-            foreach (var item in CheckedPackages())
+            try
             {
-                item.ImageKey = @"hourglass";
+                BuildButton.Enabled = false;
+                PackageButton.Enabled = false;
+                ReleaseButton.Enabled = false;
 
-                Execute(item.Package(), target);
+                foreach (var item in CheckedPackages())
+                {
+                    item.ImageKey = @"hourglass";
 
-                if (!target.Equals("build", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    item.Package().ApplyBuildVersion();
-                }
+                    Execute(item.Package(), target);
 
-                if (item.Package().HasFailed())
-                {
-                    item.ImageKey = @"cross";
-                }
-                else
-                {
-                    item.ImageKey = @"tick";
-                    item.Checked = false;
+                    if (!target.Equals("build", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        item.Package().ApplyBuildVersion();
+                    }
+
+                    if (item.Package().HasFailed())
+                    {
+                        item.ImageKey = @"cross";
+                    }
+                    else
+                    {
+                        item.ImageKey = @"tick";
+                        item.Checked = false;
+                    }
                 }
             }
-
-            BuildButton.Enabled = true;
-            PackageButton.Enabled = true;
-            ReleaseButton.Enabled = true;
+            catch (Exception ex)
+            {
+                LogMessage(ex.Message);
+            }
+            finally
+            {
+                BuildButton.Enabled = true;
+                PackageButton.Enabled = true;
+                ReleaseButton.Enabled = true;
+            }
         }
 
         private void Execute(Package package, string target)
@@ -377,6 +386,20 @@ namespace Shuttle.Packager
             BuildLog.Text = string.Empty;
             PackageTabs.SelectTab(BuildLogTab);
             BuildLogTab.Text = package.Name;
+
+            var deploymentFolder = Path.Combine(Path.GetDirectoryName(package.MSBuildPath) ?? throw new InvalidOperationException("Could not get MSBuildPath directory name."), "deployment");
+
+            if (Directory.Exists(deploymentFolder))
+            {
+                Directory.Delete(deploymentFolder, true);
+            }
+
+            var outputFolder = Path.Combine(Path.GetDirectoryName(package.ProjectPath) ?? throw new InvalidOperationException("Could not get ProjectPath directory name."), "bin");
+
+            if (Directory.Exists(outputFolder))
+            {
+                Directory.Delete(outputFolder, true);
+            }
 
             Restore(package);
 
