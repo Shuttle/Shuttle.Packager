@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Shuttle.Core.Configuration;
 
 namespace Shuttle.Packager
 {
@@ -18,6 +19,8 @@ namespace Shuttle.Packager
             new Regex(
                 @"<PackageReference\s*Include=""(?<package>.*?)""\s*Version=""(?<version>(?<major>\d*)\.(?<minor>\d*)\.(?<patch>\d*))""\s*/>",
                 RegexOptions.IgnoreCase);
+
+        private string _msbuildPath;
 
         public PackagerView()
         {
@@ -32,6 +35,15 @@ namespace Shuttle.Packager
             OpenMenuItem.Click += Open;
             GitHubMenuItem.Click += GitHub;
             RemoveFromNugetCacheMenuItem.Click += RemoveFromNugetCache;
+
+            _msbuildPath = ConfigurationItem<string>.ReadSetting("MSBuildPath",
+                    @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe")
+                .GetValue();
+
+            if (!_msbuildPath.ToLower().EndsWith("msbuild.exe"))
+            {
+                _msbuildPath = Path.Combine(_msbuildPath, "MSBuild.exe");
+            }
 
             var doubleBuffered =
                 typeof(Control).GetProperty(
@@ -414,8 +426,7 @@ namespace Shuttle.Packager
                     Arguments = Path.GetFileName(package.MSBuildPath) +
                                 $" /p:SemanticVersion={package.BuildVersion.Formatted()}" +
                                 (!string.IsNullOrEmpty(target) ? $" /t:{target}" : string.Empty),
-                    FileName =
-                        @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe",
+                    FileName = _msbuildPath,
                     CreateNoWindow = true,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
