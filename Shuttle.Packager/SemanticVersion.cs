@@ -51,11 +51,14 @@ namespace Shuttle.Packager
         public void IncreaseMajor()
         {
             Major++;
+            Minor = 0;
+            Patch = 0;
         }
 
         public void IncreaseMinor()
         {
             Minor++;
+            Patch = 0;
         }
 
         public void IncreasePatch()
