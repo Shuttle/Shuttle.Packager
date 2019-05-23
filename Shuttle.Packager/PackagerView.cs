@@ -437,6 +437,11 @@ namespace Shuttle.Packager
 
             process.OutputDataReceived += (sender, args) =>
             {
+                if (IsDisposed)
+                {
+                    return;
+                }
+
                 BeginInvoke(new Action(() => { LogMessage(args.Data); }));
             };
 
