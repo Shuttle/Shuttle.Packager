@@ -470,6 +470,8 @@ namespace Shuttle.Packager
             LogMessage("[restore]");
             LogMessage("");
 
+
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
