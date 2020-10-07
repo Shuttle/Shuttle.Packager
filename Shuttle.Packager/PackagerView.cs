@@ -36,9 +36,7 @@ namespace Shuttle.Packager
             GitHubMenuItem.Click += GitHub;
             RemoveFromNugetCacheMenuItem.Click += RemoveFromNugetCache;
 
-            _msbuildPath = ConfigurationItem<string>.ReadSetting("MSBuildPath",
-                    @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe")
-                .GetValue();
+            _msbuildPath = ConfigurationItem<string>.ReadSetting("MSBuildPath").GetValue();
 
             if (!_msbuildPath.ToLower().EndsWith("msbuild.exe"))
             {
@@ -236,9 +234,14 @@ namespace Shuttle.Packager
             foreach (var directory in Directory.GetDirectories(folder))
             {
                 var packageName = Path.GetFileName(directory);
-                var msbuildPath = Path.Combine(directory, ".build\\package.msbuild");
                 var assemblyInfoPath = Path.Combine(directory, "Properties\\AssemblyInfo.cs");
                 var projectPath = Path.Combine(directory, $"{packageName}.csproj");
+                var msbuildPath = Path.Combine(directory, ".build\\package.msbuild");
+
+                if (!File.Exists(msbuildPath))
+                {
+                    msbuildPath = Path.Combine(directory, ".package\\package.msbuild");
+                }
 
                 try
                 {
@@ -395,6 +398,8 @@ namespace Shuttle.Packager
 
         private void Execute(Package package, string target)
         {
+            var msbuildTarget = package.GetTarget(target);
+
             BuildLog.Text = string.Empty;
             PackageTabs.SelectTab(BuildLogTab);
             BuildLogTab.Text = package.Name;
@@ -425,7 +430,7 @@ namespace Shuttle.Packager
                     WorkingDirectory = Path.GetDirectoryName(package.MSBuildPath),
                     Arguments = Path.GetFileName(package.MSBuildPath) +
                                 $" /p:SemanticVersion={package.BuildVersion.Formatted()}" +
-                                (!string.IsNullOrEmpty(target) ? $" /t:{target}" : string.Empty),
+                                (!string.IsNullOrEmpty(msbuildTarget) ? $" /t:{msbuildTarget}" : string.Empty),
                     FileName = _msbuildPath,
                     CreateNoWindow = true,
                     RedirectStandardInput = true,
