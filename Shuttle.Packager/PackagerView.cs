@@ -61,6 +61,7 @@ namespace Shuttle.Packager
             {
                 return;
             }
+            
 
             try
             {
