@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shuttle.Core.Configuration;
 
@@ -20,7 +21,7 @@ namespace Shuttle.Packager
                 @"<PackageReference\s*Include=""(?<package>.*?)""\s*Version=""(?<version>(?<major>\d*)\.(?<minor>\d*)\.(?<patch>\d*))""\s*/>",
                 RegexOptions.IgnoreCase);
 
-        private string _msbuildPath;
+        private readonly string _msbuildPath;
 
         public PackagerView()
         {
@@ -61,11 +62,11 @@ namespace Shuttle.Packager
             {
                 return;
             }
-            
 
             try
             {
-                var path = $@"{Environment.ExpandEnvironmentVariables("%UserProfile%")}\.nuget\packages\{Packages.FocusedItem.Package().Name}";
+                var path =
+                    $@"{Environment.ExpandEnvironmentVariables("%UserProfile%")}\.nuget\packages\{Packages.FocusedItem.Package().Name}";
 
                 if (!Directory.Exists(path))
                 {
@@ -222,7 +223,18 @@ namespace Shuttle.Packager
         private void FetchPackages(string folder)
         {
             Packages.Items.Clear();
-            FetchPackages(folder, folder);
+
+            FetchButton.Enabled = false;
+
+            Task.Run(() =>
+            {
+                FetchPackages(folder, folder);
+
+                this.Invoke(() =>
+                {
+                    FetchButton.Enabled = true;
+                });
+            });
         }
 
         private void FetchPackages(string folder, string root)
@@ -262,14 +274,17 @@ namespace Shuttle.Packager
                         continue;
                     }
 
-                    var item = Packages.Items.Add(packageName, packageName, "package");
+                    this.Invoke(() =>
+                    {
+                        var item = Packages.Items.Add(packageName, packageName, "package");
 
-                    item.SubItems.Add("-").Name = @"Version";
-                    item.SubItems.Add(string.Empty).Name = @"Usage";
-                    item.SubItems.Add(directory.Substring(root.Length + 1)).Name = @"Location";
+                        item.SubItems.Add("-").Name = @"Version";
+                        item.SubItems.Add(string.Empty).Name = @"Usage";
+                        item.SubItems.Add(directory.Substring(root.Length + 1)).Name = @"Location";
 
-                    item.Tag = new Package(item, projectPath, msbuildPath,
-                        new SemanticVersion(match.Groups["version"].Value));
+                        item.Tag = new Package(item, projectPath, msbuildPath,
+                            new SemanticVersion(match.Groups["version"].Value));
+                    });
                 }
                 finally
                 {
@@ -277,8 +292,11 @@ namespace Shuttle.Packager
                 }
             }
 
-            PackageNameColumn.Width = -1;
-            LocationColumn.Width = -1;
+            this.Invoke(() =>
+            {
+                PackageNameColumn.Width = -1;
+                LocationColumn.Width = -1;
+            });
         }
 
         private void FolderButton_Click(object sender, EventArgs e)
@@ -405,14 +423,20 @@ namespace Shuttle.Packager
             PackageTabs.SelectTab(BuildLogTab);
             BuildLogTab.Text = package.Name;
 
-            var deploymentFolder = Path.Combine(Path.GetDirectoryName(package.MSBuildPath) ?? throw new InvalidOperationException("Could not get MSBuildPath directory name."), "deployment");
+            var deploymentFolder =
+                Path.Combine(
+                    Path.GetDirectoryName(package.MSBuildPath) ??
+                    throw new InvalidOperationException("Could not get MSBuildPath directory name."), "deployment");
 
             if (Directory.Exists(deploymentFolder))
             {
                 Directory.Delete(deploymentFolder, true);
             }
 
-            var outputFolder = Path.Combine(Path.GetDirectoryName(package.ProjectPath) ?? throw new InvalidOperationException("Could not get ProjectPath directory name."), "bin");
+            var outputFolder =
+                Path.Combine(
+                    Path.GetDirectoryName(package.ProjectPath) ??
+                    throw new InvalidOperationException("Could not get ProjectPath directory name."), "bin");
 
             if (Directory.Exists(outputFolder))
             {
@@ -475,7 +499,6 @@ namespace Shuttle.Packager
         {
             LogMessage("[restore]");
             LogMessage("");
-
 
 
             var process = new Process
