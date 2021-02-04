@@ -23,6 +23,12 @@ namespace Shuttle.Packager
 
         private readonly string _msbuildPath;
 
+        private readonly List<string> _skipFolders = new List<string>
+        {
+            ".git",
+            "node_modules"
+        };
+
         public PackagerView()
         {
             InitializeComponent();
@@ -239,13 +245,16 @@ namespace Shuttle.Packager
 
         private void FetchPackages(string folder, string root)
         {
-            if (!Directory.Exists(folder))
+            var name = Path.GetFileName(folder);
+            
+            if (!Directory.Exists(folder) ||
+                _skipFolders.Contains(name))
             {
                 return;
             }
 
             foreach (var directory in Directory.GetDirectories(folder))
-            {
+            {                   
                 var packageName = Path.GetFileName(directory);
                 var assemblyInfoPath = Path.Combine(directory, "Properties\\AssemblyInfo.cs");
                 var projectPath = Path.Combine(directory, $"{packageName}.csproj");
