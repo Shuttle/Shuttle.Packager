@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -38,6 +39,7 @@ namespace Shuttle.Packager
         public string ProjectPath { get; }
         public SemanticVersion CurrentVersion { get; private set; }
         public SemanticVersion BuildVersion { get; private set; }
+        public SemanticVersion NugetVersion { get; private set; } = null;
         public string MSBuildPath { get; }
         public string BuildLog { get; private set; }
         public PackageVersion PackageVersion { get; private set; }
@@ -162,6 +164,22 @@ namespace Shuttle.Packager
             }
 
             return string.Empty;
+        }
+
+        public void ApplyNugetVersion(SemanticVersion version)
+        {
+            NugetVersion = version;
+
+            var subItem = _item.SubItems["NuGetVersion"];
+            var value = version.Formatted();
+
+            if (!CurrentVersion.Formatted().Equals(value))
+            {
+                subItem.Font = new Font(subItem.Font.FontFamily, subItem.Font.Size, FontStyle.Bold);
+                subItem.ForeColor = Color.DarkRed;
+            }
+
+            subItem.Text = value;
         }
     }
 }

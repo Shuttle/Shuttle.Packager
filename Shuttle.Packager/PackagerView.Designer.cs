@@ -45,6 +45,7 @@
             this.Packages = new System.Windows.Forms.ListView();
             this.PackageNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.VersionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.NuGetVersionColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.UsageColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LocationColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ImageList = new System.Windows.Forms.ImageList(this.components);
@@ -66,6 +67,7 @@
             this.InvertButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             this.ClearUsagesButton = new System.Windows.Forms.Button();
+            this.NuGetVersionsButton = new System.Windows.Forms.Button();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -209,6 +211,7 @@
             this.Packages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.PackageNameColumn,
             this.VersionColumn,
+            this.NuGetVersionColumn,
             this.UsageColumn,
             this.LocationColumn});
             this.Packages.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -235,7 +238,13 @@
             // 
             this.VersionColumn.Text = "Version";
             this.VersionColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.VersionColumn.Width = 150;
+            this.VersionColumn.Width = 100;
+            // 
+            // NuGetVersionColumn
+            // 
+            this.NuGetVersionColumn.Text = "NuGet Version";
+            this.NuGetVersionColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.NuGetVersionColumn.Width = 120;
             // 
             // UsageColumn
             // 
@@ -414,11 +423,24 @@
             this.ClearUsagesButton.UseVisualStyleBackColor = true;
             this.ClearUsagesButton.Click += new System.EventHandler(this.ClearUsagesButton_Click);
             // 
+            // NuGetVersionsButton
+            // 
+            this.NuGetVersionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.NuGetVersionsButton.Location = new System.Drawing.Point(379, 65);
+            this.NuGetVersionsButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.NuGetVersionsButton.Name = "NuGetVersionsButton";
+            this.NuGetVersionsButton.Size = new System.Drawing.Size(101, 32);
+            this.NuGetVersionsButton.TabIndex = 17;
+            this.NuGetVersionsButton.Text = "NuGet Versions";
+            this.NuGetVersionsButton.UseVisualStyleBackColor = true;
+            this.NuGetVersionsButton.Click += new System.EventHandler(this.NuGetVersionsButton_Click);
+            // 
             // PackagerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(679, 552);
+            this.Controls.Add(this.NuGetVersionsButton);
             this.Controls.Add(this.ClearUsagesButton);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.InvertButton);
@@ -438,6 +460,7 @@
             this.Name = "PackagerView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Shuttle Packager";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackagerView_FormClosing);
             this.PackageTabs.ResumeLayout(false);
             this.PackageTab.ResumeLayout(false);
             this.BuildLogTab.ResumeLayout(false);
@@ -485,6 +508,8 @@
         private System.Windows.Forms.ToolStripMenuItem RemoveFromNugetCacheMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem GitHubMenuItem;
+        private System.Windows.Forms.ColumnHeader NuGetVersionColumn;
+        private System.Windows.Forms.Button NuGetVersionsButton;
     }
 }
 
