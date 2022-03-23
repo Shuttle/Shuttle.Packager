@@ -178,6 +178,11 @@ namespace Shuttle.Packager
                 subItem.Font = new Font(subItem.Font.FontFamily, subItem.Font.Size, FontStyle.Bold);
                 subItem.ForeColor = Color.DarkRed;
             }
+            else
+            {
+                subItem.Font = _item.Font;
+                subItem.ForeColor = _item.ForeColor;
+            }
 
             subItem.Text = value;
         }
