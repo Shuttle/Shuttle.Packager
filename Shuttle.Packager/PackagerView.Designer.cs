@@ -425,7 +425,7 @@
             // 
             // NuGetVersionsButton
             // 
-            this.NuGetVersionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.NuGetVersionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.NuGetVersionsButton.Location = new System.Drawing.Point(379, 65);
             this.NuGetVersionsButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.NuGetVersionsButton.Name = "NuGetVersionsButton";
