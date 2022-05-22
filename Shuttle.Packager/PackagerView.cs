@@ -84,10 +84,15 @@ namespace Shuttle.Packager
                 return;
             }
 
+            RemoveFromNugetCache(Packages.FocusedItem.Package());
+        }
+
+        private void RemoveFromNugetCache(Package package)
+        {
             try
             {
                 var path =
-                    $@"{Environment.ExpandEnvironmentVariables("%UserProfile%")}\.nuget\packages\{Packages.FocusedItem.Package().Name}";
+                    $@"{Environment.ExpandEnvironmentVariables("%UserProfile%")}\.nuget\packages\{package.Name}";
 
                 if (!Directory.Exists(path))
                 {
@@ -409,6 +414,11 @@ namespace Shuttle.Packager
 
                 foreach (var item in CheckedPackages())
                 {
+                    if (target == "package")
+                    {
+                        RemoveFromNugetCache(item.Package());
+                    }
+
                     item.ImageKey = @"hourglass";
 
                     Execute(item.Package(), target);
