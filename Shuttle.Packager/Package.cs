@@ -3,16 +3,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Shuttle.Core.Contract;
 
 namespace Shuttle.Packager
 {
-    public enum PackageVersion
-    {
-        v1 = 1,
-        v2 = 2
-    }
-
     public class Package
     {
         private readonly ListViewItem _item;
@@ -28,10 +21,6 @@ namespace Shuttle.Packager
             MSBuildPath = msbuildPath;
             BuildLog = string.Empty;
 
-            PackageVersion = msbuildPath.Contains(@"\.package\")
-                ? PackageVersion.v2
-                : PackageVersion.v1;
-
             RenderVersion();
         }
 
@@ -39,10 +28,9 @@ namespace Shuttle.Packager
         public string ProjectPath { get; }
         public SemanticVersion CurrentVersion { get; private set; }
         public SemanticVersion BuildVersion { get; private set; }
-        public SemanticVersion NugetVersion { get; private set; } = null;
+        public SemanticVersion NugetVersion { get; private set; }
         public string MSBuildPath { get; }
         public string BuildLog { get; private set; }
-        public PackageVersion PackageVersion { get; private set; }
 
         public bool Checked
         {
@@ -146,24 +134,6 @@ namespace Shuttle.Packager
         public void ShowUsage(string version)
         {
             _item.SubItems["Usage"].Text = version;
-        }
-
-        public string GetTarget(string target)
-        {
-            switch (target.ToLowerInvariant())
-            {
-                case "":
-                {
-                    return PackageVersion == PackageVersion.v1 ? string.Empty : "Push";
-                    }
-                case "package":
-                {
-                    return PackageVersion == PackageVersion.v1 ? target : "Bump";
-                }
-
-            }
-
-            return string.Empty;
         }
 
         public void ApplyNugetVersion(SemanticVersion version)

@@ -278,12 +278,7 @@ namespace Shuttle.Packager
                 var packageName = Path.GetFileName(directory);
                 var assemblyInfoPath = Path.Combine(directory, "Properties\\AssemblyInfo.cs");
                 var projectPath = Path.Combine(directory, $"{packageName}.csproj");
-                var msbuildPath = Path.Combine(directory, ".build\\package.msbuild");
-
-                if (!File.Exists(msbuildPath))
-                {
-                    msbuildPath = Path.Combine(directory, ".package\\package.msbuild");
-                }
+                var msbuildPath = Path.Combine(directory, ".package\\package.msbuild");
 
                 try
                 {
@@ -436,6 +431,11 @@ namespace Shuttle.Packager
                     {
                         item.ImageKey = @"tick";
                         item.Checked = false;
+
+                        if (DebugNugetPackage.Checked)
+                        {
+                            ApplyDebugNugetPackage(item.Package());
+                        }
                     }
                 }
             }
@@ -451,10 +451,45 @@ namespace Shuttle.Packager
             }
         }
 
+        private void ApplyDebugNugetPackage(Package package)
+        {
+            var nugetPackageLibFolder = Environment.ExpandEnvironmentVariables(
+                $"%UserProfile%\\.nuget\\packages\\{package.Name}\\{package.BuildVersion.Formatted()}\\lib");
+            var debugFolder = $"{Path.GetDirectoryName(package.ProjectPath)}\\bin\\Debug";
+
+            if (!Directory.Exists(nugetPackageLibFolder))
+            {
+                LogMessage($"[ERROR] : nuget package folder does not exist - {nugetPackageLibFolder}");
+                return;
+            }
+
+            if (!Directory.Exists(debugFolder))
+            {
+                LogMessage($"[ERROR] : debug folder does not exist - {debugFolder}");
+                return;
+            }
+
+            Copy(new DirectoryInfo(debugFolder), new DirectoryInfo(nugetPackageLibFolder));
+        }
+
+        public static void Copy(DirectoryInfo source, DirectoryInfo target)
+        {
+            Directory.CreateDirectory(target.FullName);
+
+            foreach (var fi in source.GetFiles())
+            {
+                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+            }
+
+            foreach (var diSourceSubDir in source.GetDirectories())
+            {
+                var nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
+                Copy(diSourceSubDir, nextTargetSubDir);
+            }
+        }
+
         private void Execute(Package package, string target)
         {
-            var msbuildTarget = package.GetTarget(target);
-
             BuildLog.Text = string.Empty;
             PackageTabs.SelectTab(BuildLogTab);
             BuildLogTab.Text = package.Name;
@@ -491,7 +526,7 @@ namespace Shuttle.Packager
                     WorkingDirectory = Path.GetDirectoryName(package.MSBuildPath),
                     Arguments = Path.GetFileName(package.MSBuildPath) +
                                 $" /p:SemanticVersion={package.BuildVersion.Formatted()}" +
-                                (!string.IsNullOrEmpty(msbuildTarget) ? $" /t:{msbuildTarget}" : string.Empty),
+                                (!string.IsNullOrEmpty(target) ? $" /t:{target}" : string.Empty),
                     FileName = _msbuildPath,
                     CreateNoWindow = true,
                     RedirectStandardInput = true,
