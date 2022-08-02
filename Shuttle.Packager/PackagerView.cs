@@ -611,7 +611,7 @@ namespace Shuttle.Packager
 
         private void PackageButton_Click(object sender, EventArgs e)
         {
-            Build("package");
+            Build("bump");
         }
 
         private void ReleaseButton_Click(object sender, EventArgs e)
