@@ -409,7 +409,7 @@ namespace Shuttle.Packager
 
                 foreach (var item in CheckedPackages())
                 {
-                    if (target == "package")
+                    if (target == "bump" && !DebugNugetPackage.Checked)
                     {
                         RemoveFromNugetCache(item.Package());
                     }

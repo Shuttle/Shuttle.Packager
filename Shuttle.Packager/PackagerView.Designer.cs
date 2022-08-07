@@ -273,7 +273,7 @@
             this.BuildLogTab.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.BuildLogTab.Name = "BuildLogTab";
             this.BuildLogTab.Padding = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.BuildLogTab.Size = new System.Drawing.Size(637, 348);
+            this.BuildLogTab.Size = new System.Drawing.Size(710, 341);
             this.BuildLogTab.TabIndex = 1;
             this.BuildLogTab.Text = "Log";
             this.BuildLogTab.UseVisualStyleBackColor = true;
@@ -290,7 +290,7 @@
             this.BuildLog.Name = "BuildLog";
             this.BuildLog.ReadOnly = true;
             this.BuildLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.BuildLog.Size = new System.Drawing.Size(633, 342);
+            this.BuildLog.Size = new System.Drawing.Size(706, 335);
             this.BuildLog.TabIndex = 0;
             // 
             // PackageButton
@@ -440,8 +440,6 @@
             // 
             this.DebugNugetPackage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.DebugNugetPackage.AutoSize = true;
-            this.DebugNugetPackage.Checked = true;
-            this.DebugNugetPackage.CheckState = System.Windows.Forms.CheckState.Checked;
             this.DebugNugetPackage.Location = new System.Drawing.Point(329, 506);
             this.DebugNugetPackage.Name = "DebugNugetPackage";
             this.DebugNugetPackage.Size = new System.Drawing.Size(144, 17);
