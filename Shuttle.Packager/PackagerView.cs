@@ -616,7 +616,7 @@ namespace Shuttle.Packager
 
         private void ReleaseButton_Click(object sender, EventArgs e)
         {
-            Build(string.Empty);
+            Build("push");
         }
 
         private void Packages_MouseClick(object sender, MouseEventArgs e)
