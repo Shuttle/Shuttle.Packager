@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Shuttle.Core.Configuration;
 
 namespace Shuttle.Packager
@@ -32,8 +33,8 @@ namespace Shuttle.Packager
 
         private readonly List<string> _skipFolders = new List<string>
         {
-            ".git",
-            "node_modules"
+            "node_modules",
+            "src"
         };
 
         public PackagerView()
@@ -265,16 +266,19 @@ namespace Shuttle.Packager
 
         private void FetchPackages(string folder, string root)
         {
-            var name = Path.GetFileName(folder);
-
             if (!Directory.Exists(folder) ||
-                _skipFolders.Contains(name))
+                ShouldSkipFolder(folder))
             {
                 return;
             }
 
             foreach (var directory in Directory.GetDirectories(folder))
             {
+                if (ShouldSkipFolder(directory))
+                {
+                    continue;
+                }
+
                 var packageName = Path.GetFileName(directory);
                 var assemblyInfoPath = Path.Combine(directory, "Properties\\AssemblyInfo.cs");
                 var projectPath = Path.Combine(directory, $"{packageName}.csproj");
@@ -323,6 +327,13 @@ namespace Shuttle.Packager
                 PackageNameColumn.Width = -1;
                 LocationColumn.Width = -1;
             });
+        }
+
+        private bool ShouldSkipFolder(string folder)
+        {
+            var name = Path.GetFileName(folder);
+
+            return name.StartsWith(".") || _skipFolders.Contains(name);
         }
 
         private void FolderButton_Click(object sender, EventArgs e)
