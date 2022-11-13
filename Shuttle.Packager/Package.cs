@@ -156,5 +156,14 @@ namespace Shuttle.Packager
 
             subItem.Text = value;
         }
+
+        public Package SetPrerelease(string prerelease)
+        {
+            BuildVersion.SetPrerelease(prerelease);
+
+            RenderVersion();
+
+            return this;
+        }
     }
 }

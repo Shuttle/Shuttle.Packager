@@ -69,6 +69,9 @@
             this.ClearUsagesButton = new System.Windows.Forms.Button();
             this.NuGetVersionsButton = new System.Windows.Forms.Button();
             this.DebugNugetPackage = new System.Windows.Forms.CheckBox();
+            this.Prerelease = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.PackageTabs.SuspendLayout();
             this.PackageTab.SuspendLayout();
             this.BuildLogTab.SuspendLayout();
@@ -82,7 +85,7 @@
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(36, 13);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 0;
             this.label1.Text = "Folder";
             // 
             // Folder
@@ -92,18 +95,18 @@
             this.Folder.Location = new System.Drawing.Point(15, 32);
             this.Folder.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Folder.Name = "Folder";
-            this.Folder.Size = new System.Drawing.Size(720, 20);
-            this.Folder.TabIndex = 2;
+            this.Folder.Size = new System.Drawing.Size(976, 20);
+            this.Folder.TabIndex = 1;
             this.Folder.Text = "D:\\development.github\\shuttle";
             // 
             // FolderButton
             // 
             this.FolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.FolderButton.Location = new System.Drawing.Point(660, 65);
+            this.FolderButton.Location = new System.Drawing.Point(916, 65);
             this.FolderButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.FolderButton.Name = "FolderButton";
             this.FolderButton.Size = new System.Drawing.Size(75, 32);
-            this.FolderButton.TabIndex = 3;
+            this.FolderButton.TabIndex = 7;
             this.FolderButton.Text = "Select";
             this.FolderButton.UseVisualStyleBackColor = true;
             this.FolderButton.Click += new System.EventHandler(this.FolderButton_Click);
@@ -111,11 +114,11 @@
             // FetchButton
             // 
             this.FetchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.FetchButton.Location = new System.Drawing.Point(570, 65);
+            this.FetchButton.Location = new System.Drawing.Point(826, 65);
             this.FetchButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.FetchButton.Name = "FetchButton";
             this.FetchButton.Size = new System.Drawing.Size(75, 32);
-            this.FetchButton.TabIndex = 4;
+            this.FetchButton.TabIndex = 6;
             this.FetchButton.Text = "Fetch";
             this.FetchButton.UseVisualStyleBackColor = true;
             this.FetchButton.Click += new System.EventHandler(this.FetchButton_Click);
@@ -123,11 +126,11 @@
             // BuildButton
             // 
             this.BuildButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BuildButton.Location = new System.Drawing.Point(658, 497);
+            this.BuildButton.Location = new System.Drawing.Point(914, 681);
             this.BuildButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.BuildButton.Name = "BuildButton";
-            this.BuildButton.Size = new System.Drawing.Size(75, 32);
-            this.BuildButton.TabIndex = 6;
+            this.BuildButton.Size = new System.Drawing.Size(75, 36);
+            this.BuildButton.TabIndex = 19;
             this.BuildButton.Text = "Build";
             this.BuildButton.UseVisualStyleBackColor = true;
             this.BuildButton.Click += new System.EventHandler(this.BuildButton_Click);
@@ -135,11 +138,11 @@
             // MajorButton
             // 
             this.MajorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.MajorButton.Location = new System.Drawing.Point(15, 497);
+            this.MajorButton.Location = new System.Drawing.Point(15, 681);
             this.MajorButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.MajorButton.Name = "MajorButton";
-            this.MajorButton.Size = new System.Drawing.Size(45, 32);
-            this.MajorButton.TabIndex = 7;
+            this.MajorButton.Size = new System.Drawing.Size(45, 36);
+            this.MajorButton.TabIndex = 9;
             this.MajorButton.Text = "Major";
             this.MajorButton.UseVisualStyleBackColor = true;
             this.MajorButton.Click += new System.EventHandler(this.MajorButton_Click);
@@ -147,11 +150,11 @@
             // MinorButton
             // 
             this.MinorButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.MinorButton.Location = new System.Drawing.Point(60, 497);
+            this.MinorButton.Location = new System.Drawing.Point(60, 681);
             this.MinorButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.MinorButton.Name = "MinorButton";
-            this.MinorButton.Size = new System.Drawing.Size(45, 32);
-            this.MinorButton.TabIndex = 8;
+            this.MinorButton.Size = new System.Drawing.Size(45, 36);
+            this.MinorButton.TabIndex = 10;
             this.MinorButton.Text = "Minor";
             this.MinorButton.UseVisualStyleBackColor = true;
             this.MinorButton.Click += new System.EventHandler(this.MinorButton_Click);
@@ -159,11 +162,11 @@
             // PatchButton
             // 
             this.PatchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PatchButton.Location = new System.Drawing.Point(105, 497);
+            this.PatchButton.Location = new System.Drawing.Point(105, 681);
             this.PatchButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.PatchButton.Name = "PatchButton";
-            this.PatchButton.Size = new System.Drawing.Size(45, 32);
-            this.PatchButton.TabIndex = 9;
+            this.PatchButton.Size = new System.Drawing.Size(45, 36);
+            this.PatchButton.TabIndex = 11;
             this.PatchButton.Text = "Patch";
             this.PatchButton.UseVisualStyleBackColor = true;
             this.PatchButton.Click += new System.EventHandler(this.PatchButton_Click);
@@ -171,11 +174,11 @@
             // ResetButton
             // 
             this.ResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ResetButton.Location = new System.Drawing.Point(165, 497);
+            this.ResetButton.Location = new System.Drawing.Point(386, 681);
             this.ResetButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(45, 32);
-            this.ResetButton.TabIndex = 10;
+            this.ResetButton.Size = new System.Drawing.Size(45, 36);
+            this.ResetButton.TabIndex = 15;
             this.ResetButton.Text = "Reset";
             this.ResetButton.UseVisualStyleBackColor = true;
             this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
@@ -191,8 +194,8 @@
             this.PackageTabs.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.PackageTabs.Name = "PackageTabs";
             this.PackageTabs.SelectedIndex = 0;
-            this.PackageTabs.Size = new System.Drawing.Size(718, 367);
-            this.PackageTabs.TabIndex = 11;
+            this.PackageTabs.Size = new System.Drawing.Size(974, 551);
+            this.PackageTabs.TabIndex = 8;
             // 
             // PackageTab
             // 
@@ -201,7 +204,7 @@
             this.PackageTab.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.PackageTab.Name = "PackageTab";
             this.PackageTab.Padding = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.PackageTab.Size = new System.Drawing.Size(710, 341);
+            this.PackageTab.Size = new System.Drawing.Size(966, 525);
             this.PackageTab.TabIndex = 0;
             this.PackageTab.Text = "Packages";
             this.PackageTab.UseVisualStyleBackColor = true;
@@ -222,9 +225,9 @@
             this.Packages.Location = new System.Drawing.Point(2, 3);
             this.Packages.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Packages.Name = "Packages";
-            this.Packages.Size = new System.Drawing.Size(706, 335);
+            this.Packages.Size = new System.Drawing.Size(962, 519);
             this.Packages.SmallImageList = this.ImageList;
-            this.Packages.TabIndex = 1;
+            this.Packages.TabIndex = 0;
             this.Packages.UseCompatibleStateImageBehavior = false;
             this.Packages.View = System.Windows.Forms.View.Details;
             this.Packages.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Packages_MouseClick);
@@ -273,7 +276,7 @@
             this.BuildLogTab.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.BuildLogTab.Name = "BuildLogTab";
             this.BuildLogTab.Padding = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.BuildLogTab.Size = new System.Drawing.Size(710, 341);
+            this.BuildLogTab.Size = new System.Drawing.Size(966, 525);
             this.BuildLogTab.TabIndex = 1;
             this.BuildLogTab.Text = "Log";
             this.BuildLogTab.UseVisualStyleBackColor = true;
@@ -290,17 +293,17 @@
             this.BuildLog.Name = "BuildLog";
             this.BuildLog.ReadOnly = true;
             this.BuildLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.BuildLog.Size = new System.Drawing.Size(706, 335);
+            this.BuildLog.Size = new System.Drawing.Size(962, 519);
             this.BuildLog.TabIndex = 0;
             // 
             // PackageButton
             // 
             this.PackageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.PackageButton.Location = new System.Drawing.Point(568, 497);
+            this.PackageButton.Location = new System.Drawing.Point(824, 681);
             this.PackageButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.PackageButton.Name = "PackageButton";
-            this.PackageButton.Size = new System.Drawing.Size(75, 32);
-            this.PackageButton.TabIndex = 12;
+            this.PackageButton.Size = new System.Drawing.Size(75, 36);
+            this.PackageButton.TabIndex = 18;
             this.PackageButton.Text = "Package";
             this.PackageButton.UseVisualStyleBackColor = true;
             this.PackageButton.Click += new System.EventHandler(this.PackageButton_Click);
@@ -308,11 +311,11 @@
             // ReleaseButton
             // 
             this.ReleaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ReleaseButton.Location = new System.Drawing.Point(478, 497);
+            this.ReleaseButton.Location = new System.Drawing.Point(734, 681);
             this.ReleaseButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.ReleaseButton.Name = "ReleaseButton";
-            this.ReleaseButton.Size = new System.Drawing.Size(75, 32);
-            this.ReleaseButton.TabIndex = 13;
+            this.ReleaseButton.Size = new System.Drawing.Size(75, 36);
+            this.ReleaseButton.TabIndex = 17;
             this.ReleaseButton.Text = "Release";
             this.ReleaseButton.UseVisualStyleBackColor = true;
             this.ReleaseButton.Click += new System.EventHandler(this.ReleaseButton_Click);
@@ -397,7 +400,7 @@
             this.InvertButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.InvertButton.Name = "InvertButton";
             this.InvertButton.Size = new System.Drawing.Size(75, 32);
-            this.InvertButton.TabIndex = 14;
+            this.InvertButton.TabIndex = 2;
             this.InvertButton.Text = "Invert";
             this.InvertButton.UseVisualStyleBackColor = true;
             this.InvertButton.Click += new System.EventHandler(this.InvertButton_Click);
@@ -408,7 +411,7 @@
             this.ClearButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(75, 32);
-            this.ClearButton.TabIndex = 15;
+            this.ClearButton.TabIndex = 3;
             this.ClearButton.Text = "Clear";
             this.ClearButton.UseVisualStyleBackColor = true;
             this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
@@ -419,7 +422,7 @@
             this.ClearUsagesButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.ClearUsagesButton.Name = "ClearUsagesButton";
             this.ClearUsagesButton.Size = new System.Drawing.Size(90, 32);
-            this.ClearUsagesButton.TabIndex = 16;
+            this.ClearUsagesButton.TabIndex = 4;
             this.ClearUsagesButton.Text = "Clear usages";
             this.ClearUsagesButton.UseVisualStyleBackColor = true;
             this.ClearUsagesButton.Click += new System.EventHandler(this.ClearUsagesButton_Click);
@@ -427,11 +430,11 @@
             // NuGetVersionsButton
             // 
             this.NuGetVersionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.NuGetVersionsButton.Location = new System.Drawing.Point(452, 65);
+            this.NuGetVersionsButton.Location = new System.Drawing.Point(708, 65);
             this.NuGetVersionsButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.NuGetVersionsButton.Name = "NuGetVersionsButton";
             this.NuGetVersionsButton.Size = new System.Drawing.Size(101, 32);
-            this.NuGetVersionsButton.TabIndex = 17;
+            this.NuGetVersionsButton.TabIndex = 5;
             this.NuGetVersionsButton.Text = "NuGet Versions";
             this.NuGetVersionsButton.UseVisualStyleBackColor = true;
             this.NuGetVersionsButton.Click += new System.EventHandler(this.NuGetVersionsButton_Click);
@@ -440,18 +443,49 @@
             // 
             this.DebugNugetPackage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.DebugNugetPackage.AutoSize = true;
-            this.DebugNugetPackage.Location = new System.Drawing.Point(329, 506);
+            this.DebugNugetPackage.Location = new System.Drawing.Point(585, 692);
             this.DebugNugetPackage.Name = "DebugNugetPackage";
             this.DebugNugetPackage.Size = new System.Drawing.Size(144, 17);
-            this.DebugNugetPackage.TabIndex = 18;
+            this.DebugNugetPackage.TabIndex = 16;
             this.DebugNugetPackage.Text = "Debug NuGet Package?";
             this.DebugNugetPackage.UseVisualStyleBackColor = true;
+            // 
+            // Prerelease
+            // 
+            this.Prerelease.Location = new System.Drawing.Point(155, 697);
+            this.Prerelease.Name = "Prerelease";
+            this.Prerelease.Size = new System.Drawing.Size(130, 20);
+            this.Prerelease.TabIndex = 13;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(152, 681);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(60, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Pre-release";
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button1.Location = new System.Drawing.Point(290, 681);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(92, 36);
+            this.button1.TabIndex = 14;
+            this.button1.Text = "Set pre-release";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // PackagerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(752, 545);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.Prerelease);
             this.Controls.Add(this.DebugNugetPackage);
             this.Controls.Add(this.NuGetVersionsButton);
             this.Controls.Add(this.ClearUsagesButton);
@@ -470,6 +504,7 @@
             this.Controls.Add(this.Folder);
             this.Controls.Add(this.label1);
             this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.Name = "PackagerView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Shuttle Packager";
@@ -524,6 +559,9 @@
         private System.Windows.Forms.ColumnHeader NuGetVersionColumn;
         private System.Windows.Forms.Button NuGetVersionsButton;
         private System.Windows.Forms.CheckBox DebugNugetPackage;
+        private System.Windows.Forms.TextBox Prerelease;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button1;
     }
 }
 

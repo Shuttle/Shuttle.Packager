@@ -18,8 +18,7 @@ namespace Shuttle.Packager
 {
     public partial class PackagerView : Form
     {
-        private readonly Regex _assemblyVersionExpression =
-            new Regex(@"AssemblyVersion\s*\(\s*""(?<version>.*)""\s*\)", RegexOptions.IgnoreCase);
+        private readonly Regex _versionExpression = new Regex(@"\<version\>(?<version>.*)</version\>", RegexOptions.IgnoreCase);
 
         private readonly CancellationToken _cancellationToken;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -280,22 +279,22 @@ namespace Shuttle.Packager
                 }
 
                 var packageName = Path.GetFileName(directory);
-                var assemblyInfoPath = Path.Combine(directory, "Properties\\AssemblyInfo.cs");
                 var projectPath = Path.Combine(directory, $"{packageName}.csproj");
+                var nuspecPath = Path.Combine(directory, $".package\\package.nuspec");
                 var msbuildPath = Path.Combine(directory, ".package\\package.msbuild");
 
                 try
                 {
                     if (!File.Exists(msbuildPath)
                         ||
-                        !File.Exists(assemblyInfoPath)
+                        !File.Exists(nuspecPath)
                         ||
                         !File.Exists(projectPath))
                     {
                         continue;
                     }
 
-                    var match = _assemblyVersionExpression.Match(File.ReadAllText(assemblyInfoPath));
+                    var match = _versionExpression.Match(File.ReadAllText(nuspecPath));
 
                     if (!match.Success)
                     {
@@ -757,6 +756,14 @@ namespace Shuttle.Packager
                     NuGetVersionsButton.Enabled = true;
                 });
             }, _cancellationToken);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            foreach (var item in CheckedPackages())
+            {
+                item.Package().SetPrerelease(Prerelease.Text);
+            }
         }
     }
 }
