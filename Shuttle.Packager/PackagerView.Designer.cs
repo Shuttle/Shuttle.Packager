@@ -452,6 +452,7 @@
             // 
             // Prerelease
             // 
+            this.Prerelease.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Prerelease.Location = new System.Drawing.Point(155, 697);
             this.Prerelease.Name = "Prerelease";
             this.Prerelease.Size = new System.Drawing.Size(130, 20);
@@ -459,6 +460,7 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(152, 681);
             this.label2.Name = "label2";
