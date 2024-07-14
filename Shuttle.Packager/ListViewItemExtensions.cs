@@ -4,9 +4,9 @@ namespace Shuttle.Packager
 {
     public static class ListViewItemExtensions
     {
-        internal static Package Package(this ListViewItem item)
+        internal static Package GetPackage(this ListViewItem item)
         {
-            return (Package) item.Tag;
+            return (item.Tag as Package) ?? throw new ApplicationException($"Could not get the 'Package' for list view item '{item.Text}'.");
         }
     }
 }
