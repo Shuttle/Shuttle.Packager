@@ -70,7 +70,7 @@
             DebugNugetPackage = new CheckBox();
             Prerelease = new TextBox();
             label2 = new Label();
-            button1 = new Button();
+            SetPreReleaseButton = new Button();
             PackageTabs.SuspendLayout();
             PackageTab.SuspendLayout();
             BuildLogTab.SuspendLayout();
@@ -448,24 +448,24 @@
             label2.TabIndex = 12;
             label2.Text = "Pre-release";
             // 
-            // button1
+            // SetPreReleaseButton
             // 
-            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            button1.Location = new Point(338, 786);
-            button1.Margin = new Padding(2, 3, 2, 3);
-            button1.Name = "button1";
-            button1.Size = new Size(107, 42);
-            button1.TabIndex = 14;
-            button1.Text = "Set pre-release";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            SetPreReleaseButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            SetPreReleaseButton.Location = new Point(338, 786);
+            SetPreReleaseButton.Margin = new Padding(2, 3, 2, 3);
+            SetPreReleaseButton.Name = "SetPreReleaseButton";
+            SetPreReleaseButton.Size = new Size(107, 42);
+            SetPreReleaseButton.TabIndex = 14;
+            SetPreReleaseButton.Text = "Set pre-release";
+            SetPreReleaseButton.UseVisualStyleBackColor = true;
+            SetPreReleaseButton.Click += SetPreReleaseButton_Click;
             // 
             // PackagerView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1176, 841);
-            Controls.Add(button1);
+            Controls.Add(SetPreReleaseButton);
             Controls.Add(label2);
             Controls.Add(Prerelease);
             Controls.Add(DebugNugetPackage);
@@ -542,7 +542,7 @@
         private System.Windows.Forms.CheckBox DebugNugetPackage;
         private System.Windows.Forms.TextBox Prerelease;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button SetPreReleaseButton;
     }
 }
 

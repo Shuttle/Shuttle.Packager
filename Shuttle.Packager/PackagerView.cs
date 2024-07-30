@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -161,7 +162,7 @@ public partial class PackagerView : Form
         Build("build");
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void SetPreReleaseButton_Click(object sender, EventArgs e)
     {
         foreach (var item in CheckedPackages())
         {
@@ -467,7 +468,18 @@ public partial class PackagerView : Form
             return;
         }
 
-        Process.Start($"https://github.com/Shuttle/{Packages.FocusedItem.GetPackage().Name}");
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = $"https://github.com/Shuttle/{Packages.FocusedItem.GetPackage().Name}",
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, @"Open GitHub", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
     }
 
     private void InvertButton_Click(object sender, EventArgs e)
