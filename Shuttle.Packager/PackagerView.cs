@@ -231,10 +231,10 @@ public partial class PackagerView : Form
             fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
         }
 
-        foreach (var diSourceSubDir in source.GetDirectories())
+        foreach (var sourceSubDir in source.GetDirectories())
         {
-            var nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-            Copy(diSourceSubDir, nextTargetSubDir);
+            var nextTargetSubDir = target.CreateSubdirectory(sourceSubDir.Name);
+            Copy(sourceSubDir, nextTargetSubDir);
         }
     }
 
