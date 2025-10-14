@@ -32,7 +32,7 @@ public class Package
     public string MSBuildPath { get; }
 
     public string Name => _item.Text;
-    public SemanticVersion NugetVersion { get; private set; }
+    public SemanticVersion? NugetVersion { get; private set; }
     public string ProjectPath { get; }
 
     public void ApplyBuildVersion()

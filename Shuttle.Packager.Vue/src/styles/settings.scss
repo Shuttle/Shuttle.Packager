@@ -1,0 +1,6 @@
+@forward 'vuetify/settings' with (
+  $utilities: false,
+  $reset: false
+);
+
+@use 'tailwindcss';

@@ -1,0 +1,11 @@
+{
+  "close": "Close",
+  "debug": "Debug",
+  "name": "Name",
+  "load": "Load",
+  "projects": "Projects",
+  "release": "Release",
+  "search": "Search",
+  "show-log": "Show log",
+  "version": "Version"
+}
