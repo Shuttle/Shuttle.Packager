@@ -3,6 +3,7 @@
   "debug": "Debug",
   "name": "Name",
   "load": "Load",
+  "packages-only": "Packages only?",
   "projects": "Projects",
   "release": "Release",
   "search": "Search",

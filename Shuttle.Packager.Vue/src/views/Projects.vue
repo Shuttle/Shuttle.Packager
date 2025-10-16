@@ -7,6 +7,7 @@
         <v-btn :icon="mdiRefresh" size="x-small" @click="refresh"></v-btn>
         <v-text-field v-model="search" density="compact" :label="$t('search')" :prepend-inner-icon="mdiMagnify"
           variant="solo-filled" flat hide-details single-line></v-text-field>
+        <v-switch v-model="packagesOnly" :label="t('packages-only')" hide-details></v-switch>
         <v-select v-model="packageSource" :items="packageSources" item-title="name" item-value="name" density="compact"
           hide-details class="max-w-64" />
         <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group density="compact">
@@ -20,9 +21,9 @@
       </div>
     </v-card-title>
     <v-divider></v-divider>
-    <v-data-table :items="projects" :headers="headers" v-model:expanded="expanded" @click:row="toggle" :mobile="null"
-      mobile-breakpoint="md" v-model:search="search" :loading="busy" v-model="selected" show-select
-      item-selectable="selectable" item-value="id" show-expand>
+    <v-data-table :items="filteredProjects" :headers="headers" v-model:expanded="expanded" @click:row="toggle"
+      :mobile="null" density="default" mobile-breakpoint="md" v-model:search="search" :loading="busy" v-model="selected"
+      show-select item-selectable="selectable" item-value="id" show-expand>
       <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
         <v-btn v-if="!!internalItem.raw.log" :append-icon="isExpanded(internalItem) ? mdiChevronUp : mdiChevronDown"
           :text="isExpanded(internalItem) ? t('close') : t('show-log')" class="text-none"
@@ -57,14 +58,12 @@
         <v-progress-linear v-if="item.busy" indeterminate />
       </template>
       <template v-slot:item.version="{ item }">
-        <div class="sv-strip my-2" v-if="item.editingVersion">
-          <form @submit.prevent="setVersion(item)" class="sv-strip w-64">
-            <v-btn :icon="mdiCloseCircleOutline" size="x-small" @click.stop="cancelVersion(item)"></v-btn>
-            <v-btn :icon="mdiCheckCircleOutline" size="x-small" @click.stop="setVersion(item)"></v-btn>
-            <v-text-field v-model="item.vnext" hide-details variant="solo-filled" density="compact"
-              @click.stop></v-text-field>
-          </form>
-        </div>
+        <form v-if="item.editingVersion" @submit.prevent="setVersion(item)" class="sv-strip w-64 mt-2">
+          <v-btn :icon="mdiCloseCircleOutline" size="x-small" @click.stop="cancelVersion(item)"></v-btn>
+          <v-btn :icon="mdiCheckCircleOutline" size="x-small" @click.stop="setVersion(item)"></v-btn>
+          <v-text-field v-model="item.vnext" hide-details variant="solo-filled" density="compact"
+            @click.stop></v-text-field>
+        </form>
         <span v-else class="cursor-pointer" @click.stop="openVersion(item)">{{ item.version }}</span>
       </template>
       <template #expanded-row="{ columns, item }">
@@ -92,6 +91,7 @@ const { t } = useI18n({ useScope: 'global' });
 const busy: Ref<boolean> = ref(false);
 const search = ref('')
 const expanded: Ref<string[]> = ref([])
+const packagesOnly: Ref<boolean> = ref(true)
 const packageSource: Ref<string> = ref("Default");
 const packageSources: Ref<PackageSource[]> = ref([]);
 const projects: Ref<Project[]> = ref([]);
@@ -120,6 +120,10 @@ const headers: any[] = [
     value: "name",
   }
 ];
+
+const filteredProjects = computed(() => {
+  return projects.value.filter(project => !packagesOnly.value || !!project.version);
+})
 
 const collapse = (id: string) => {
   const index = expanded.value.findIndex(item => item === id);
