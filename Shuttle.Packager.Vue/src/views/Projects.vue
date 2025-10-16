@@ -7,11 +7,12 @@
         <v-btn :icon="mdiRefresh" size="x-small" @click="refresh"></v-btn>
         <v-text-field v-model="search" density="compact" :label="$t('search')" :prepend-inner-icon="mdiMagnify"
           variant="solo-filled" flat hide-details single-line></v-text-field>
+        <v-select v-model="packageSource" :items="packageSources" item-title="name" item-value="name" density="compact"
+          hide-details class="max-w-64" />
         <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group density="compact">
           <v-btn value="Debug">
             {{ $t("debug") }}
           </v-btn>
-
           <v-btn value="Release">
             {{ $t("release") }}
           </v-btn>
@@ -82,7 +83,7 @@
 <script lang="ts" setup>
 import { api } from '@/api';
 import { mdiAlert, mdiApplicationOutline, mdiCheckCircleOutline, mdiChevronDown, mdiChevronUp, mdiCloseCircleOutline, mdiFileReplaceOutline, mdiMagnify, mdiOpenInNew, mdiPlay, mdiPlayBoxOutline, mdiPlayNetworkOutline, mdiRefresh } from '@mdi/js';
-import type { PackageOptions, PackageResult, Project } from '@/packager';
+import type { PackageOptions, PackageResult, PackageSource, Project } from '@/packager';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -91,6 +92,8 @@ const { t } = useI18n({ useScope: 'global' });
 const busy: Ref<boolean> = ref(false);
 const search = ref('')
 const expanded: Ref<string[]> = ref([])
+const packageSource: Ref<string> = ref("Default");
+const packageSources: Ref<PackageSource[]> = ref([]);
 const projects: Ref<Project[]> = ref([]);
 const selected: Ref<string[]> = ref([]);
 const packageOptions: Ref<PackageOptions> = ref({
@@ -222,6 +225,12 @@ const cancelVersion = (item: Project) => {
   item.editingVersion = false;
 }
 
+const fetchPackageSources = async () => {
+  const response = await api.get("/package-sources");
+
+  packageSources.value = response.data
+}
+
 const refresh = async () => {
   busy.value = true;
 
@@ -249,6 +258,7 @@ const load = async () => {
   }
 
   await refresh()
+  await fetchPackageSources()
 }
 
 onMounted(async () => {

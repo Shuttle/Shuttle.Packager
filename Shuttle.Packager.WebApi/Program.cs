@@ -38,6 +38,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors();
 
-app.MapProjectEndpoints();
+app
+    .MapPackageSourceEndpoints()
+    .MapProjectEndpoints();
 
 app.Run();

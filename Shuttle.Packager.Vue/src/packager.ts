@@ -55,6 +55,10 @@ export type PackageResult = {
   failed: boolean;
 };
 
+export type PackageSource = {
+  name: string;
+};
+
 export type Project = {
   id: string;
   name: string;
@@ -66,6 +70,10 @@ export type Project = {
   busy: boolean;
   log: string;
   status: string;
+};
+
+export type ServerConfiguration = {
+  allowPasswordAuthentication: boolean;
 };
 
 export type SnackbarStoreState = {

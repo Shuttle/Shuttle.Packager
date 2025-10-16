@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Shuttle.Packager.WebApi.Repositories;
@@ -10,7 +9,7 @@ namespace Shuttle.Packager.WebApi.Endpoints;
 
 public static class ProjectEndpoints
 {
-    public static void MapProjectEndpoints(this WebApplication app)
+    public static WebApplication MapProjectEndpoints(this WebApplication app)
     {
         app.MapGet("/projects", async (IProjectRepository repository) => (await repository.GetAsync()).Select(Map));
 
@@ -92,6 +91,8 @@ public static class ProjectEndpoints
 
             return Results.Ok();
         });
+
+        return app;
     }
 
     private static async Task<string> ExecuteAsync(string command, IProjectRepository repository, Guid id, PackageOptionsModel model)
