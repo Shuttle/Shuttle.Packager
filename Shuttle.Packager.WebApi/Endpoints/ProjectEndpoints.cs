@@ -70,7 +70,7 @@ public static class ProjectEndpoints
             }
 
             var nugetLog = await ExecuteAsync($"nuget push {project.GetPackageFilePath("Release")}");
-            var nugetFailed = nugetLog.Contains("failed", StringComparison.InvariantCultureIgnoreCase);
+            var nugetFailed = nugetLog.Contains("error:", StringComparison.InvariantCultureIgnoreCase);
 
             return Results.Ok(new
             {
