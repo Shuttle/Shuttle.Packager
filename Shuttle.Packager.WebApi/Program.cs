@@ -19,7 +19,8 @@ webApplicationBuilder.Services.Configure<PackagerOptions>(webApplicationBuilder.
 
 webApplicationBuilder.Services
     .AddSingleton<IValidateOptions<PackagerOptions>, PackagerOptionsValidator>()
-    .AddSingleton<IProjectRepository, InMemoryProjectRepository>();
+    .AddSingleton<IProjectRepository, InMemoryProjectRepository>()
+    .AddHttpClient();
 
 webApplicationBuilder.Services.AddCors(options =>
 {

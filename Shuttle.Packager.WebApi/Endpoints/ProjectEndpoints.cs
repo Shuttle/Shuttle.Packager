@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -29,7 +30,9 @@ public static class ProjectEndpoints
 
         app.MapPatch("/projects/{id:guid}/build", async (IProjectRepository repository, Guid id, PackageOptionsModel model) =>
         {
-            var log = await ExecuteAsync("build", repository, id, model);
+            var project = await repository.GetAsync(id);
+
+            var log = await ExecuteAsync($"build {project.FilePath} --configuration {model.Configuration}");
 
             return Results.Ok(new
             {
@@ -40,12 +43,39 @@ public static class ProjectEndpoints
 
         app.MapPatch("/projects/{id:guid}/pack", async (IProjectRepository repository, Guid id, PackageOptionsModel model) =>
         {
-            var log = await ExecuteAsync("pack", repository, id, model);
+            var project = await repository.GetAsync(id);
+
+            var log = await ExecuteAsync($"pack {project.FilePath} --configuration {model.Configuration}");
 
             return Results.Ok(new
             {
                 Log = log,
                 Failed = log.Contains("failed", StringComparison.InvariantCultureIgnoreCase)
+            });
+        });
+
+        app.MapPatch("/projects/{id:guid}/push", async (IProjectRepository repository, Guid id) =>
+        {
+            var project = await repository.GetAsync(id);
+            var packLog = await ExecuteAsync($"pack {project.FilePath}");
+            var packFailed = packLog.Contains("failed", StringComparison.InvariantCultureIgnoreCase);
+
+            if (packFailed)
+            {
+                return Results.Ok(new
+                {
+                    Log = packLog,
+                    Failed = packFailed
+                });
+            }
+
+            var nugetLog = await ExecuteAsync($"nuget push {project.GetPackageFilePath("Release")}");
+            var nugetFailed = nugetLog.Contains("failed", StringComparison.InvariantCultureIgnoreCase);
+
+            return Results.Ok(new
+            {
+                Log = packLog + "\n" + nugetLog,
+                Failed = nugetFailed
             });
         });
 
@@ -75,7 +105,7 @@ public static class ProjectEndpoints
 
             if (string.IsNullOrEmpty(project.GetSolutionPath()))
             {
-                return Results.Problem(new ProblemDetails
+                return Results.Problem(new()
                 {
                     Detail = $"Cannot find a solution path for project '{project.Name}'."
                 });
@@ -92,18 +122,41 @@ public static class ProjectEndpoints
             return Results.Ok();
         });
 
+        app.MapGet("/projects/{id:guid}/nuget-version", async (IHttpClientFactory httpClientFactory, IProjectRepository repository, Guid id) =>
+        {
+            var httpClient = httpClientFactory.CreateClient("nuget");
+
+            var project = await repository.GetAsync(id);
+
+            using var response = await httpClient.GetAsync(new Uri($"https://api.nuget.org/v3-flatcontainer/{project.Name}/index.json"));
+
+            var version = string.Empty;
+            
+            if (response.IsSuccessStatusCode)
+            {
+                using var document = JsonDocument.Parse(response.Content.ReadAsStringAsync().Result);
+                
+                version = document.RootElement.GetProperty("versions").EnumerateArray()
+                    .LastOrDefault()
+                    .ToString();
+            }
+
+            return Results.Ok(new
+            {
+                NugetVersion = version
+            });
+        });
+
         return app;
     }
 
-    private static async Task<string> ExecuteAsync(string command, IProjectRepository repository, Guid id, PackageOptionsModel model)
+    private static async Task<string> ExecuteAsync(string arguments)
     {
-        var project = await repository.GetAsync(id);
-
         var process = new Process
         {
             StartInfo = new()
             {
-                Arguments = $"{command} {project.Path} --configuration {model.Configuration}",
+                Arguments = arguments,
                 FileName = "dotnet",
                 CreateNoWindow = true,
                 RedirectStandardInput = true,

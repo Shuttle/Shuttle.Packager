@@ -1,8 +1,9 @@
 {
   "close": "Close",
   "debug": "Debug",
-  "name": "Name",
   "load": "Load",
+  "name": "Name",
+  "nuget-version": "NuGet version",
   "packages-only": "Packages only?",
   "projects": "Projects",
   "release": "Release",

@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 using Shuttle.Core.Contract;
 
@@ -7,7 +6,7 @@ namespace Shuttle.Packager.WebApi
     public class Project
     {
         private string _solutionPath = string.Empty;
-        private readonly Regex _versionExpression = new(@"<Version>(?<version>.*?)</Version>");
+        private readonly Regex _versionExpression = new("<Version>(?<version>.*?)</Version>");
 
         public Project(string path)
         {
@@ -16,15 +15,15 @@ namespace Shuttle.Packager.WebApi
                 throw new ArgumentException($"Project file '{path}' could not be found.");
             }
 
-            Path = Guard.AgainstEmpty(path);
-            Name = System.IO.Path.GetFileNameWithoutExtension(path);
+            FilePath = Guard.AgainstEmpty(path);
+            Name = Path.GetFileNameWithoutExtension(path);
 
             Read();
         }
 
         private void Read()
         {
-            var contents = File.ReadAllText(Path);
+            var contents = File.ReadAllText(FilePath);
 
             var match = _versionExpression.Match(contents);
 
@@ -35,13 +34,13 @@ namespace Shuttle.Packager.WebApi
         }
 
         public Guid Id { get; } = Guid.NewGuid();
-        public string Path { get; }
+        public string FilePath { get; }
         public string Name { get; private set; }
         public string Version { get; set; } = string.Empty;
 
         public string GetSolutionPath()
         {
-            var path = System.IO.Path.GetDirectoryName(Path);
+            var path = Path.GetDirectoryName(FilePath);
 
             while (string.IsNullOrEmpty(_solutionPath))
             {
@@ -58,7 +57,7 @@ namespace Shuttle.Packager.WebApi
                     break;
                 }
 
-                path = System.IO.Path.GetDirectoryName(path);
+                path = Path.GetDirectoryName(path);
             }
 
             return _solutionPath;
@@ -66,7 +65,7 @@ namespace Shuttle.Packager.WebApi
 
         public async Task<bool> SetVersionAsync(string version)
         {
-            var contents = await File.ReadAllTextAsync(Path);
+            var contents = await File.ReadAllTextAsync(FilePath);
 
             var match = _versionExpression.Match(contents);
 
@@ -76,10 +75,17 @@ namespace Shuttle.Packager.WebApi
             }
 
             var updatedContents = contents.Replace(match.Value, $"<Version>{version}</Version>");
-            await File.WriteAllTextAsync(Path, updatedContents);
+            await File.WriteAllTextAsync(FilePath, updatedContents);
             Version = version;
 
             return true;
+        }
+
+        public string GetPackageFilePath(string configuration)
+        {
+            var path = Path.Combine(Guard.AgainstEmpty(Path.GetDirectoryName(FilePath)), "bin", Guard.AgainstEmpty(configuration), $"{Name}.{Version}.nupkg");
+
+            return !File.Exists(path) ? throw new ApplicationException($"Could not find package file '{path}'.") : path;
         }
     }
 }

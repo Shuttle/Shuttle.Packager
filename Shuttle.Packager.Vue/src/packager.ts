@@ -46,6 +46,10 @@ export type FormTitle = {
   type?: "borderless" | "normal";
 };
 
+export type NugetVersion = {
+  nugetVersion: string;
+};
+
 export type PackageOptions = {
   configuration: string;
 };
@@ -70,6 +74,7 @@ export type Project = {
   busy: boolean;
   log: string;
   status: string;
+  nugetVersion?: string;
 };
 
 export type ServerConfiguration = {

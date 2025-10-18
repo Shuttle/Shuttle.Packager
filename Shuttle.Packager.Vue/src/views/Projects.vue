@@ -35,27 +35,42 @@
         <div class="sv-strip my-2">
           <v-btn :icon="mdiPlay" size="x-small" @click="build()"></v-btn>
           <v-btn :icon="mdiPlayBoxOutline" size="x-small" @click="pack()"></v-btn>
-          <v-btn :icon="mdiPlayNetworkOutline" size="x-small" @click="push()"></v-btn>
+          <v-btn :icon="mdiUploadBoxOutline" size="x-small" @click="push()"></v-btn>
+          <v-btn :icon="mdiHexadecimal" size="x-small" @click="getNugetVersion()"></v-btn>
         </div>
       </template>
       <template v-slot:item.action="{ item }">
-        <div class="sv-strip my-2">
-          <v-btn v-if="item.selectable" :icon="mdiPlay" size="x-small" @click.stop="build(item)"
-            :disabled="item.busy"></v-btn>
-          <v-btn v-if="item.selectable" :icon="mdiPlayBoxOutline" size="x-small" @click="pack(item)"
-            :disabled="item.busy"></v-btn>
-          <v-btn v-if="item.selectable" :icon="mdiPlayNetworkOutline" size="x-small" @click="push(item)"
-            :disabled="item.busy"></v-btn>
-          <v-btn :icon="mdiApplicationOutline" size="x-small" @click="open(item)"></v-btn>
-          <v-btn :icon="mdiOpenInNew" size="x-small" :href="`https://www.nuget.org/packages/${item.name}`"
-            target="_blank"></v-btn>
-        </div>
+        <v-speed-dial location="right center" transition="fade-transition" class="sv-strip" open-on-hover>
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-btn v-bind="activatorProps" :icon="mdiDotsHorizontalCircleOutline"></v-btn>
+          </template>
+
+          <div class="p-4 bg-neutral-700 border border-primary rounded-full gap-2 flex">
+            <v-btn v-if="item.selectable" :icon="mdiPlay" size="x-small" @click="build(item)"
+              :disabled="item.busy"></v-btn>
+            <v-btn v-if="item.selectable" :icon="mdiPlayBoxOutline" size="x-small" @click="pack(item)"
+              :disabled="item.busy"></v-btn>
+            <v-btn v-if="item.selectable" :icon="mdiUploadBoxOutline" size="x-small" @click="push(item)"
+              :disabled="item.busy"></v-btn>
+            <v-btn v-if="item.selectable" :icon="mdiHexadecimal" size="x-small" @click="getNugetVersion(item)"
+              :disabled="item.busy"></v-btn>
+            <v-btn :icon="mdiApplicationOutline" size="x-small" @click="open(item)"></v-btn>
+            <v-btn :icon="mdiOpenInNew" size="x-small" :href="`https://www.nuget.org/packages/${item.name}`"
+              target="_blank"></v-btn>
+          </div>
+        </v-speed-dial>
       </template>
       <template v-slot:item.name="{ item }">
         <div class="sv-strip my-2">
           <span>{{ item.name }}</span>
         </div>
         <v-progress-linear v-if="item.busy" indeterminate />
+      </template>
+      <template v-slot:item.nugetVersion="{ item }">
+        <div v-if="!!item.nugetVersion" class="sv-strip my-2 justify-end">
+          <v-icon v-if="item.nugetVersion !== item.version" :icon="mdiNotEqualVariant" class="text-orange-400" />
+          <div :class="item.nugetVersion !== item.version ? 'text-orange-400' : ''">{{ item.nugetVersion }}</div>
+        </div>
       </template>
       <template v-slot:item.version="{ item }">
         <form v-if="item.editingVersion" @submit.prevent="setVersion(item)" class="sv-strip w-64 mt-2">
@@ -81,8 +96,8 @@
 
 <script lang="ts" setup>
 import { api } from '@/api';
-import { mdiAlert, mdiApplicationOutline, mdiCheckCircleOutline, mdiChevronDown, mdiChevronUp, mdiCloseCircleOutline, mdiFileReplaceOutline, mdiMagnify, mdiOpenInNew, mdiPlay, mdiPlayBoxOutline, mdiPlayNetworkOutline, mdiRefresh } from '@mdi/js';
-import type { PackageOptions, PackageResult, PackageSource, Project } from '@/packager';
+import { mdiAlert, mdiApplicationOutline, mdiCheckCircleOutline, mdiChevronDown, mdiChevronUp, mdiCloseCircleOutline, mdiDotsHorizontalCircleOutline, mdiFileReplaceOutline, mdiHexadecimal, mdiMagnify, mdiNotEqualVariant, mdiOpenInNew, mdiPlay, mdiPlayBoxOutline, mdiRefresh, mdiUploadBoxOutline } from '@mdi/js';
+import type { NugetVersion, PackageOptions, PackageResult, PackageSource, Project } from '@/packager';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -118,7 +133,15 @@ const headers: any[] = [
   {
     title: t("name"),
     value: "name",
-  }
+  },
+  {
+    headerProps: {
+      class: "w-32"
+    },
+    align: 'end',
+    title: t("nuget-version"),
+    value: "nugetVersion",
+  },
 ];
 
 const filteredProjects = computed(() => {
@@ -176,6 +199,26 @@ const getProject = (id: string) => {
   }
 
   return result;
+}
+
+const getNugetVersion = (project?: Project) => {
+  const items = project ? [project] : selected.value.map(id => getProject(id));
+
+  items.forEach(async item => {
+    item.busy = true
+
+    try {
+      item.log = ''
+
+      collapse(item.id)
+
+      const result = await api.get<NugetVersion>(`projects/${item.id}/nuget-version`)
+
+      item.nugetVersion = result.data.nugetVersion
+    } finally {
+      item.busy = false;
+    }
+  });
 }
 
 const execute = async (command: string, project?: Project) => {
