@@ -5,15 +5,17 @@ using Shuttle.Packager.WebApi.Repositories;
 
 var webApplicationBuilder = WebApplication.CreateBuilder(args);
 
-webApplicationBuilder.Services.AddSwaggerGen();
-webApplicationBuilder.Services.AddApiVersioning(options =>
-{
-    options.ReportApiVersions = true;
-}).AddApiExplorer(options =>
-{
-    options.GroupNameFormat = "'v'VVV";
-    options.SubstituteApiVersionInUrl = true;
-});
+webApplicationBuilder.Services
+    .AddSwaggerGen()
+    .AddApiVersioning(options =>
+    {
+        options.ReportApiVersions = true;
+    })
+    .AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true;
+    });
 
 webApplicationBuilder.Services.Configure<PackagerOptions>(webApplicationBuilder.Configuration.GetSection(PackagerOptions.SectionName));
 
