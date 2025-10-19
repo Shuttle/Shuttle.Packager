@@ -8,8 +8,8 @@
         <v-text-field v-model="search" density="compact" :label="$t('search')" :prepend-inner-icon="mdiMagnify"
           variant="solo-filled" flat hide-details single-line></v-text-field>
         <v-switch v-model="packagesOnly" :label="t('packages-only')" hide-details></v-switch>
-        <v-select v-model="packageSource" :items="packageSources" item-title="name" item-value="name" density="compact"
-          hide-details class="max-w-64" />
+        <v-select v-model="packageOptions.packageSourceName" :items="packageSources" item-title="name" item-value="name"
+          density="compact" clearable hide-details class="max-w-64" />
         <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group density="compact">
           <v-btn value="Debug">
             {{ $t("debug") }}
@@ -96,7 +96,24 @@
 
 <script lang="ts" setup>
 import { api } from '@/api';
-import { mdiAlert, mdiApplicationOutline, mdiCheckCircleOutline, mdiChevronDown, mdiChevronUp, mdiCloseCircleOutline, mdiDotsHorizontalCircleOutline, mdiFileReplaceOutline, mdiHexadecimal, mdiMagnify, mdiNotEqualVariant, mdiOpenInNew, mdiPlay, mdiPlayBoxOutline, mdiRefresh, mdiUploadBoxOutline } from '@mdi/js';
+import {
+  mdiAlert,
+  mdiApplicationOutline,
+  mdiCheckCircleOutline,
+  mdiChevronDown,
+  mdiChevronUp,
+  mdiCloseCircleOutline,
+  mdiDotsHorizontalCircleOutline,
+  mdiFileReplaceOutline,
+  mdiHexadecimal,
+  mdiMagnify,
+  mdiNotEqualVariant,
+  mdiOpenInNew,
+  mdiPlay,
+  mdiPlayBoxOutline,
+  mdiRefresh,
+  mdiUploadBoxOutline
+} from '@mdi/js';
 import type { NugetVersion, PackageOptions, PackageResult, PackageSource, Project } from '@/packager';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -107,7 +124,6 @@ const busy: Ref<boolean> = ref(false);
 const search = ref('')
 const expanded: Ref<string[]> = ref([])
 const packagesOnly: Ref<boolean> = ref(true)
-const packageSource: Ref<string> = ref("Default");
 const packageSources: Ref<PackageSource[]> = ref([]);
 const projects: Ref<Project[]> = ref([]);
 const selected: Ref<string[]> = ref([]);
