@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Shuttle.Packager.WebApi.Repositories;
 
@@ -10,6 +9,53 @@ namespace Shuttle.Packager.WebApi.Endpoints;
 
 public static class ProjectEndpoints
 {
+    private static async Task<string> ExecuteAsync(string arguments)
+    {
+        var process = new Process
+        {
+            StartInfo = new()
+            {
+                Arguments = arguments,
+                FileName = "dotnet",
+                CreateNoWindow = true,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            },
+            EnableRaisingEvents = true
+        };
+
+        var log = new StringBuilder();
+
+        process.OutputDataReceived += (_, args) =>
+        {
+            log.AppendLine(args.Data ?? string.Empty);
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+
+        while (!process.HasExited)
+        {
+            await Task.Delay(100);
+        }
+
+        process.CancelOutputRead();
+
+        var logText = log.ToString();
+        return logText;
+    }
+
+    private static ProjectModel Map(Project project)
+    {
+        return new()
+        {
+            Id = project.Id,
+            Name = project.Name,
+            Version = project.Version
+        };
+    }
+
     public static WebApplication MapProjectEndpoints(this WebApplication app)
     {
         app.MapGet("/projects", async (IProjectRepository repository) => (await repository.GetAsync()).Select(Map));
@@ -54,8 +100,24 @@ public static class ProjectEndpoints
             });
         });
 
-        app.MapPatch("/projects/{id:guid}/push", async (IProjectRepository repository, Guid id) =>
+        app.MapPatch("/projects/{id:guid}/push", async (IOptions<PackagerOptions> options, IProjectRepository repository, Guid id, PackageOptionsModel model) =>
         {
+            var packageSourceName = string.Empty;
+            var packageSourceKey = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(model.PackageSourceName))
+            {
+                var packageSource = options.Value.PackageSources.FirstOrDefault(item => item.Name.Equals(model.PackageSourceName));
+
+                if (packageSource == null)
+                {
+                    return Results.BadRequest($"Unknown package source name '{model.PackageSourceName}'.");
+                }
+
+                packageSourceName = packageSource.Name;
+                packageSourceKey = packageSource.Key;
+            }
+            
             var project = await repository.GetAsync(id);
             var packLog = await ExecuteAsync($"pack {project.FilePath}");
             var packFailed = packLog.Contains("failed", StringComparison.InvariantCultureIgnoreCase);
@@ -69,7 +131,19 @@ public static class ProjectEndpoints
                 });
             }
 
-            var nugetLog = await ExecuteAsync($"nuget push {project.GetPackageFilePath("Release")}");
+            var command = $"nuget push {project.GetPackageFilePath("Release")}";
+
+            if (!string.IsNullOrWhiteSpace(packageSourceName))
+            {
+                command += $" -s {packageSourceName}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(packageSourceKey))
+            {
+                command += $" -k {packageSourceKey}";
+            }
+
+            var nugetLog = await ExecuteAsync(command);
             var nugetFailed = nugetLog.Contains("error:", StringComparison.InvariantCultureIgnoreCase);
 
             return Results.Ok(new
@@ -131,11 +205,11 @@ public static class ProjectEndpoints
             using var response = await httpClient.GetAsync(new Uri($"https://api.nuget.org/v3-flatcontainer/{project.Name}/index.json"));
 
             var version = string.Empty;
-            
+
             if (response.IsSuccessStatusCode)
             {
                 using var document = JsonDocument.Parse(response.Content.ReadAsStringAsync().Result);
-                
+
                 version = document.RootElement.GetProperty("versions").EnumerateArray()
                     .LastOrDefault()
                     .ToString();
@@ -148,52 +222,5 @@ public static class ProjectEndpoints
         });
 
         return app;
-    }
-
-    private static async Task<string> ExecuteAsync(string arguments)
-    {
-        var process = new Process
-        {
-            StartInfo = new()
-            {
-                Arguments = arguments,
-                FileName = "dotnet",
-                CreateNoWindow = true,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false
-            },
-            EnableRaisingEvents = true
-        };
-
-        var log = new StringBuilder();
-
-        process.OutputDataReceived += (_, args) =>
-        {
-            log.AppendLine(args.Data ?? string.Empty);
-        };
-
-        process.Start();
-        process.BeginOutputReadLine();
-
-        while (!process.HasExited)
-        {
-            await Task.Delay(100);
-        }
-
-        process.CancelOutputRead();
-
-        var logText = log.ToString();
-        return logText;
-    }
-
-    private static ProjectModel Map(Project project)
-    {
-        return new()
-        {
-            Id = project.Id,
-            Name = project.Name,
-            Version = project.Version
-        };
     }
 }
