@@ -115,7 +115,6 @@ import {
   mdiOpenInNew,
   mdiPlay,
   mdiPlayBoxOutline,
-  mdiRefresh,
   mdiUploadBoxOutline
 } from '@mdi/js';
 import type { NugetVersion, PackageOptions, PackageResult, PackageSource, Project } from '@/packager';
