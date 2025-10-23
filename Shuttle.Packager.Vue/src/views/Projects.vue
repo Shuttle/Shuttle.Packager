@@ -1,13 +1,17 @@
 <template>
+  <s-filter-drawer hide-filter>
+    <v-btn :append-icon="mdiFileReplaceOutline" @click="reload">{{
+      $t('reload')
+    }}</v-btn>
+    <v-switch v-model="packagesOnly" :label="t('packages-only')" hide-details></v-switch>
+  </s-filter-drawer>
   <v-card flat>
-    <v-card-title class="sv-card-title">
-      <sv-title :title="$t('projects')" />
-      <div class="sv-strip">
-        <v-btn :icon="mdiFileReplaceOutline" size="x-small" @click="load"></v-btn>
-        <v-btn :icon="mdiRefresh" size="x-small" @click="refresh"></v-btn>
+    <v-card-title class="s-card-title">
+      <s-title :title="$t('projects')" />
+      <div class="s-strip">
+        <v-btn :icon="mdiFileReplaceOutline" size="x-small" @click="reload"></v-btn>
         <v-text-field v-model="search" density="compact" :label="$t('search')" :prepend-inner-icon="mdiMagnify"
           variant="solo-filled" flat hide-details single-line></v-text-field>
-        <v-switch v-model="packagesOnly" :label="t('packages-only')" hide-details></v-switch>
         <v-select v-model="packageOptions.packageSourceName" :items="packageSources" item-title="name" item-value="name"
           density="compact" clearable hide-details class="max-w-64" />
         <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group density="compact">
@@ -32,7 +36,7 @@
           @click.stop="toggleExpand(internalItem)"></v-btn>
       </template>
       <template v-slot:header.action="">
-        <div class="sv-strip my-2">
+        <div class="s-strip my-2">
           <v-btn :icon="mdiPlay" size="x-small" @click="build()"></v-btn>
           <v-btn :icon="mdiPlayBoxOutline" size="x-small" @click="pack()"></v-btn>
           <v-btn :icon="mdiUploadBoxOutline" size="x-small" @click="push()"></v-btn>
@@ -40,7 +44,7 @@
         </div>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-speed-dial location="right center" transition="fade-transition" class="sv-strip" open-on-hover>
+        <v-speed-dial location="right center" transition="fade-transition" class="s-strip" open-on-hover>
           <template v-slot:activator="{ props: activatorProps }">
             <v-btn v-bind="activatorProps" :icon="mdiDotsHorizontalCircleOutline"></v-btn>
           </template>
@@ -61,19 +65,19 @@
         </v-speed-dial>
       </template>
       <template v-slot:item.name="{ item }">
-        <div class="sv-strip my-2">
+        <div class="s-strip my-2">
           <span>{{ item.name }}</span>
         </div>
         <v-progress-linear v-if="item.busy" indeterminate />
       </template>
       <template v-slot:item.nugetVersion="{ item }">
-        <div v-if="!!item.nugetVersion" class="sv-strip my-2 justify-end">
+        <div v-if="!!item.nugetVersion" class="s-strip my-2 justify-end">
           <v-icon v-if="item.nugetVersion !== item.version" :icon="mdiNotEqualVariant" class="text-orange-400" />
           <div :class="item.nugetVersion !== item.version ? 'text-orange-400' : ''">{{ item.nugetVersion }}</div>
         </div>
       </template>
       <template v-slot:item.version="{ item }">
-        <form v-if="item.editingVersion" @submit.prevent="setVersion(item)" class="sv-strip w-64 mt-2">
+        <form v-if="item.editingVersion" @submit.prevent="setVersion(item)" class="s-strip w-64 mt-2">
           <v-btn :icon="mdiCloseCircleOutline" size="x-small" @click.stop="cancelVersion(item)"></v-btn>
           <v-btn :icon="mdiCheckCircleOutline" size="x-small" @click.stop="setVersion(item)"></v-btn>
           <v-text-field v-model="item.vnext" hide-details variant="solo-filled" density="compact"
@@ -84,7 +88,7 @@
       <template #expanded-row="{ columns, item }">
         <tr>
           <td :colspan="columns.length">
-            <div class="sv-expand-container font-mono wrap-anywhere bg-neutral-900 text-neutral-300">
+            <div class="s-expand-container font-mono wrap-anywhere bg-neutral-900 text-neutral-300">
               <pre class="whitespace-pre-wrap">{{ item.log }}</pre>
             </div>
           </td>
@@ -310,7 +314,7 @@ const refresh = async () => {
   }
 }
 
-const load = async () => {
+const reload = async () => {
   busy.value = true;
 
   try {
@@ -325,6 +329,6 @@ const load = async () => {
 }
 
 onMounted(async () => {
-  await load();
+  await reload();
 })
 </script>

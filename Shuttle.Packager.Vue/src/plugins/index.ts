@@ -15,6 +15,7 @@ import "@/styles/main.css";
 import type { App } from "vue";
 
 // Components
+import FilterDrawer from "@/components/FilterDrawer.vue";
 import FormTitle from "@/components/FormTitle.vue";
 
 document.querySelector("html")?.setAttribute("lang", i18n.global.locale.value);
@@ -22,5 +23,6 @@ document.querySelector("html")?.setAttribute("lang", i18n.global.locale.value);
 export function registerPlugins(app: App) {
   app.use(vuetify).use(router).use(pinia).use(i18n);
 
-  app.component("sv-title", FormTitle);
+  app.component("s-title", FormTitle);
+  app.component("s-filter-drawer", FilterDrawer);
 }

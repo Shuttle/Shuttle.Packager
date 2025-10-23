@@ -52,7 +52,7 @@ export type NugetVersion = {
 
 export type PackageOptions = {
   configuration: string;
-  packageSourceName: string;
+  packageSourceName?: string;
 };
 
 export type PackageResult = {

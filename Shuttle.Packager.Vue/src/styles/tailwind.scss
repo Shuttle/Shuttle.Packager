@@ -2,60 +2,60 @@
 
 @layer components {
   /* Card */
-  .sv-card {
+  .s-card {
     @apply text-center;
   }
 
   /* Form */
-  .sv-form {
+  .s-form {
     @apply w-full mx-auto ease-in duration-300 p-2;
   }
 
-  .sv-form--sm {
+  .s-form--sm {
     @apply lg:w-1/4 md:w-2/4;
   }
 
-  .sv-form--md {
+  .s-form--md {
     @apply lg:w-2/4 md:w-3/4;
   }
 
-  .sv-form--lg {
+  .s-form--lg {
     @apply lg:w-3/4;
   }
 
   /* Form Drawer */
-  .sv-form-drawer {
+  .s-form-drawer {
     @apply fixed top-0 right-0 bottom-0 w-full z-[1000];
   }
 
-  .sv-form-drawer__overlay {
+  .s-form-drawer__overlay {
     @apply h-full w-full bg-black opacity-25;
   }
 
   /* Strip */
-  .sv-strip {
+  .s-strip {
     @apply flex flex-row items-center gap-2 mb-2;
   }
 
-  .sv-strip--reverse {
+  .s-strip--reverse {
     @apply flex-row-reverse;
   }
 
   /* Table */
-  .sv-expand-container {
+  .s-expand-container {
     @apply border rounded-md p-2 my-2 border-neutral-600;
   }
 
   /* Title */
-  .sv-title {
+  .s-title {
     @apply flex flex-row items-center font-semibold text-xl pb-2 mb-4 w-full cursor-default border-0;
   }
 
-  .sv-title--normal {
+  .s-title--normal {
     @apply border-b-1 border-solid;
   }
 
-  .sv-title--borderless {
+  .s-title--borderless {
     @apply border-0;
   }
 }
