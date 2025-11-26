@@ -49,7 +49,15 @@ namespace Shuttle.Packager.WebApi
                     return string.Empty;
                 }
 
-                var files = Directory.GetFiles(path, "*.sln");
+                var files = Directory.GetFiles(path, "*.slnx");
+
+                if (files.Any())
+                {
+                    _solutionPath = files[0];
+                    break;
+                }
+
+                files = Directory.GetFiles(path, "*.sln");
 
                 if (files.Any())
                 {

@@ -2,16 +2,16 @@
   <s-filter-drawer hide-filter>
     <v-btn :append-icon="mdiFileReplaceOutline" @click="reload">{{
       $t('reload')
-    }}</v-btn>
+      }}</v-btn>
     <v-switch v-model="packagesOnly" :label="t('packages-only')" hide-details></v-switch>
+    <v-switch v-model="allowPush" :label="t('allow-push')" hide-details></v-switch>
   </s-filter-drawer>
   <v-card flat>
     <v-card-title class="s-card-title">
       <s-title :title="$t('projects')" />
       <div class="s-strip">
-        <v-btn :icon="mdiFileReplaceOutline" size="x-small" @click="reload"></v-btn>
         <v-text-field v-model="search" density="compact" :label="$t('search')" :prepend-inner-icon="mdiMagnify"
-          variant="solo-filled" flat hide-details single-line></v-text-field>
+          variant="solo-filled" flat hide-details single-line clearable></v-text-field>
         <v-select v-model="packageOptions.packageSourceName" :items="packageSources" item-title="name" item-value="name"
           density="compact" clearable hide-details class="max-w-64" />
         <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group density="compact">
@@ -54,7 +54,7 @@
               :disabled="item.busy"></v-btn>
             <v-btn v-if="item.selectable" :icon="mdiPlayBoxOutline" size="x-small" @click="pack(item)"
               :disabled="item.busy"></v-btn>
-            <v-btn v-if="item.selectable" :icon="mdiUploadBoxOutline" size="x-small" @click="push(item)"
+            <v-btn v-if="item.selectable && allowPush" :icon="mdiUploadBoxOutline" size="x-small" @click="push(item)"
               :disabled="item.busy"></v-btn>
             <v-btn v-if="item.selectable" :icon="mdiHexadecimal" size="x-small" @click="getNugetVersion(item)"
               :disabled="item.busy"></v-btn>
@@ -126,6 +126,7 @@ const { t } = useI18n({ useScope: 'global' });
 const busy: Ref<boolean> = ref(false);
 const search = ref('')
 const expanded: Ref<string[]> = ref([])
+const allowPush: Ref<boolean> = ref(false)
 const packagesOnly: Ref<boolean> = ref(true)
 const packageSources: Ref<PackageSource[]> = ref([]);
 const projects: Ref<Project[]> = ref([]);

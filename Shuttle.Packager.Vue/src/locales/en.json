@@ -1,4 +1,5 @@
 {
+  "allow-push": "Allow push?",
   "close": "Close",
   "debug": "Debug",
   "load": "Load",
