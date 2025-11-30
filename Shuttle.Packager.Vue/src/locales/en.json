@@ -5,6 +5,7 @@
   "load": "Load",
   "name": "Name",
   "nuget-version": "NuGet version",
+  "package-reference": "Package reference",
   "packages-only": "Packages only?",
   "projects": "Projects",
   "release": "Release",

@@ -64,11 +64,17 @@ export type PackageSource = {
   name: string;
 };
 
+export type PackageReference = {
+  name: string;
+  version: string;
+};
+
 export type Project = {
   id: string;
   name: string;
   path: string;
   version: string;
+  packageReferences: PackageReference[];
   vnext: string;
   editingVersion: boolean;
   selectable: boolean;
@@ -76,6 +82,7 @@ export type Project = {
   log: string;
   status: string;
   nugetVersion?: string;
+  showPackageReferences?: boolean;
 };
 
 export type ServerConfiguration = {

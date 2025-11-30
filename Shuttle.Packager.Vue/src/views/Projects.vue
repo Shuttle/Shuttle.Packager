@@ -2,7 +2,7 @@
   <s-filter-drawer hide-filter>
     <v-btn :append-icon="mdiFileReplaceOutline" @click="reload">{{
       $t('reload')
-      }}</v-btn>
+    }}</v-btn>
     <v-switch v-model="packagesOnly" :label="t('packages-only')" hide-details></v-switch>
     <v-switch v-model="allowPush" :label="t('allow-push')" hide-details></v-switch>
   </s-filter-drawer>
@@ -10,8 +10,10 @@
     <v-card-title class="s-card-title">
       <s-title :title="$t('projects')" />
       <div class="s-strip">
-        <v-text-field v-model="search" density="compact" :label="$t('search')" :prepend-inner-icon="mdiMagnify"
-          variant="solo-filled" flat hide-details single-line clearable></v-text-field>
+        <v-text-field v-model="nameFilter" density="compact" :label="$t('name')" :prepend-inner-icon="mdiMagnify"
+          variant="solo-filled" flat hide-details clearable></v-text-field>
+        <v-text-field v-model="packageReferenceFilter" density="compact" :label="$t('package-reference')"
+          :prepend-inner-icon="mdiMagnify" variant="solo-filled" flat hide-details clearable></v-text-field>
         <v-select v-model="packageOptions.packageSourceName" :items="packageSources" item-title="name" item-value="name"
           density="compact" clearable hide-details class="max-w-64" />
         <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group density="compact">
@@ -25,9 +27,9 @@
       </div>
     </v-card-title>
     <v-divider></v-divider>
-    <v-data-table :items="filteredProjects" :headers="headers" v-model:expanded="expanded" @click:row="toggle"
-      :mobile="null" density="default" mobile-breakpoint="md" v-model:search="search" :loading="busy" v-model="selected"
-      show-select item-selectable="selectable" item-value="id" show-expand>
+    <v-data-table :items="filteredProjects" :headers="headers" v-model:expanded="expanded" @click:row="toggleExpanded"
+      :mobile="null" density="default" mobile-breakpoint="md" :loading="busy" v-model="selected" show-select
+      item-selectable="selectable" item-value="id" show-expand>
       <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
         <v-btn v-if="!!internalItem.raw.log" :append-icon="isExpanded(internalItem) ? mdiChevronUp : mdiChevronDown"
           :text="isExpanded(internalItem) ? t('close') : t('show-log')" class="text-none"
@@ -39,7 +41,7 @@
         <div class="s-strip my-2">
           <v-btn :icon="mdiPlay" size="x-small" @click="build()"></v-btn>
           <v-btn :icon="mdiPlayBoxOutline" size="x-small" @click="pack()"></v-btn>
-          <v-btn :icon="mdiUploadBoxOutline" size="x-small" @click="push()"></v-btn>
+          <v-btn v-if="allowPush" :icon="mdiUploadBoxOutline" size="x-small" @click="push()"></v-btn>
           <v-btn :icon="mdiHexadecimal" size="x-small" @click="getNugetVersion()"></v-btn>
         </div>
       </template>
@@ -61,12 +63,21 @@
             <v-btn :icon="mdiApplicationOutline" size="x-small" @click="open(item)"></v-btn>
             <v-btn :icon="mdiOpenInNew" size="x-small" :href="`https://www.nuget.org/packages/${item.name}`"
               target="_blank"></v-btn>
+            <v-btn :icon="mdiLink" size="x-small" @click="packageReferenceFilter = item.name"></v-btn>
           </div>
         </v-speed-dial>
       </template>
       <template v-slot:item.name="{ item }">
-        <div class="s-strip my-2">
-          <span>{{ item.name }}</span>
+        <div class="flex flex-col my-2">
+          <div class="flex flex-row gap-2">
+            <div>{{ item.name }}</div>
+            <v-icon :icon="getIcon(item)" @click.stop="togglePackageReferences(item)" class="text-neutral-500" />
+          </div>
+          <div v-if="item.showPackageReferences" class="flex flex-row gap-2 mt-2 w-fit">
+            <v-chip v-for="packageReference in item.packageReferences" :key="packageReference.name" density="compact"
+              class="text-xs text-neutral-500">{{
+                `${packageReference.name}@${packageReference.version}` }}</v-chip>
+          </div>
         </div>
         <v-progress-linear v-if="item.busy" indeterminate />
       </template>
@@ -110,6 +121,8 @@ import {
   mdiDotsHorizontalCircleOutline,
   mdiFileReplaceOutline,
   mdiHexadecimal,
+  mdiLink,
+  mdiLinkOff,
   mdiMagnify,
   mdiNotEqualVariant,
   mdiOpenInNew,
@@ -124,7 +137,8 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n({ useScope: 'global' });
 
 const busy: Ref<boolean> = ref(false);
-const search = ref('')
+const nameFilter = ref('')
+const packageReferenceFilter = ref('')
 const expanded: Ref<string[]> = ref([])
 const allowPush: Ref<boolean> = ref(false)
 const packagesOnly: Ref<boolean> = ref(true)
@@ -165,8 +179,27 @@ const headers: any[] = [
 ];
 
 const filteredProjects = computed(() => {
-  return projects.value.filter(project => !packagesOnly.value || !!project.version);
+  const nameMatch = nameFilter.value?.toLowerCase();
+  const packageReferenceMatch = packageReferenceFilter.value?.toLowerCase();
+
+  let result = projects.value.filter(project => (!nameMatch || project.name.toLowerCase().includes(nameMatch)) && (!packagesOnly.value || !!project.version));
+
+  if (packageReferenceFilter.value) {
+    result = result.filter(project => (project.packageReferences ?? []).some(reference => reference.name.toLowerCase().includes(packageReferenceMatch)))
+
+    result.forEach(project => project.showPackageReferences = true);
+  }
+
+  return result;
 })
+
+const getIcon = (project: Project) => {
+  return project.showPackageReferences ? mdiLinkOff : mdiLink;
+}
+
+const togglePackageReferences = (project: Project) => {
+  project.showPackageReferences = !project.showPackageReferences;
+}
 
 const collapse = (id: string) => {
   const index = expanded.value.findIndex(item => item === id);
@@ -184,7 +217,7 @@ const expand = (id: string) => {
   }
 }
 
-const toggle = (_: Event, { item }: { item: Project }) => {
+const toggleExpanded = (_: Event, { item }: { item: Project }) => {
   if (!item.version || !item.log) {
     collapse(item.id)
     return;

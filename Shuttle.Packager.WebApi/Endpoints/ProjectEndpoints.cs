@@ -52,7 +52,13 @@ public static class ProjectEndpoints
         {
             Id = project.Id,
             Name = project.Name,
-            Version = project.Version
+            Version = project.Version,
+            PackageReferences = project.PackageReferences
+                .Select(item => new ProjectModel.PackageReference
+                {
+                    Name = item.Name, Version = item.Version
+                })
+                .ToList()
         };
     }
 
@@ -117,7 +123,7 @@ public static class ProjectEndpoints
                 packageSourceName = packageSource.Name;
                 packageSourceKey = packageSource.Key;
             }
-            
+
             var project = await repository.GetAsync(id);
             var packLog = await ExecuteAsync($"pack {project.FilePath}");
             var packFailed = packLog.Contains("failed", StringComparison.InvariantCultureIgnoreCase);
