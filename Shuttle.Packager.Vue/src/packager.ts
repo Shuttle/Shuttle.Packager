@@ -72,7 +72,8 @@ export type PackageReference = {
 export type Project = {
   id: string;
   name: string;
-  path: string;
+  filePath: string;
+  folder: string;
   version: string;
   packageReferences: PackageReference[];
   vnext: string;

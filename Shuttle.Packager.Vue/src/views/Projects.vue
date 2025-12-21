@@ -2,28 +2,34 @@
   <s-filter-drawer hide-filter>
     <v-btn :append-icon="mdiFileReplaceOutline" @click="reload">{{
       $t('reload')
-    }}</v-btn>
-    <v-switch v-model="packagesOnly" :label="t('packages-only')" hide-details></v-switch>
+      }}</v-btn>
+    <v-btn-toggle v-model="projectType" variant="outlined" group mandatory>
+      <v-btn value="versioned" :icon="mdiNumeric"></v-btn>
+      <v-btn value="unversioned" :icon="mdiNumericOff"></v-btn>
+      <v-btn value="all" :icon="mdiInfinity"></v-btn>
+    </v-btn-toggle>
     <v-switch v-model="allowPush" :label="t('allow-push')" hide-details></v-switch>
+    <v-divider></v-divider>
+    <v-select v-model="packageOptions.packageSourceName" :items="packageSources" item-title="name" item-value="name"
+      :label="t('package-source')" clearable hide-details />
+    <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group class="w-full" mandatory>
+      <v-btn value="Debug">
+        {{ $t("debug") }}
+      </v-btn>
+      <v-btn value="Release">
+        {{ $t("release") }}
+      </v-btn>
+    </v-btn-toggle>
+
   </s-filter-drawer>
   <v-card flat>
     <v-card-title class="s-card-title">
       <s-title :title="$t('projects')" />
       <div class="s-strip">
-        <v-text-field v-model="nameFilter" density="compact" :label="$t('name')" :prepend-inner-icon="mdiMagnify"
+        <v-text-field v-model="search" density="compact" :label="$t('search')" :prepend-inner-icon="mdiMagnify"
           variant="solo-filled" flat hide-details clearable></v-text-field>
         <v-text-field v-model="packageReferenceFilter" density="compact" :label="$t('package-reference')"
           :prepend-inner-icon="mdiMagnify" variant="solo-filled" flat hide-details clearable></v-text-field>
-        <v-select v-model="packageOptions.packageSourceName" :items="packageSources" item-title="name" item-value="name"
-          density="compact" clearable hide-details class="max-w-64" />
-        <v-btn-toggle v-model="packageOptions.configuration" variant="outlined" group density="compact">
-          <v-btn value="Debug">
-            {{ $t("debug") }}
-          </v-btn>
-          <v-btn value="Release">
-            {{ $t("release") }}
-          </v-btn>
-        </v-btn-toggle>
       </div>
     </v-card-title>
     <v-divider></v-divider>
@@ -51,7 +57,7 @@
             <v-btn v-bind="activatorProps" :icon="mdiDotsHorizontalCircleOutline"></v-btn>
           </template>
 
-          <div class="p-4 bg-neutral-700 border border-primary rounded-full gap-2 flex">
+          <div class="p-4 bg-neutral-700 border border-primary rounded-full gap-2 flex" :key="item.id">
             <v-btn v-if="item.selectable" :icon="mdiPlay" size="x-small" @click="build(item)"
               :disabled="item.busy"></v-btn>
             <v-btn v-if="item.selectable" :icon="mdiPlayBoxOutline" size="x-small" @click="pack(item)"
@@ -80,6 +86,9 @@
           </div>
         </div>
         <v-progress-linear v-if="item.busy" indeterminate />
+      </template>
+      <template v-slot:item.folder="{ item }">
+        <span class="text-neutral-600 hover:text-neutral-300">{{ item.folder }}</span>
       </template>
       <template v-slot:item.nugetVersion="{ item }">
         <div v-if="!!item.nugetVersion" class="s-strip my-2 justify-end">
@@ -121,10 +130,13 @@ import {
   mdiDotsHorizontalCircleOutline,
   mdiFileReplaceOutline,
   mdiHexadecimal,
+  mdiInfinity,
   mdiLink,
   mdiLinkOff,
   mdiMagnify,
   mdiNotEqualVariant,
+  mdiNumeric,
+  mdiNumericOff,
   mdiOpenInNew,
   mdiPlay,
   mdiPlayBoxOutline,
@@ -137,11 +149,11 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n({ useScope: 'global' });
 
 const busy: Ref<boolean> = ref(false);
-const nameFilter = ref('')
+const search = ref('')
 const packageReferenceFilter = ref('')
 const expanded: Ref<string[]> = ref([])
 const allowPush: Ref<boolean> = ref(false)
-const packagesOnly: Ref<boolean> = ref(true)
+const projectType: Ref<string> = ref("versioned")
 const packageSources: Ref<PackageSource[]> = ref([]);
 const projects: Ref<Project[]> = ref([]);
 const selected: Ref<string[]> = ref([]);
@@ -169,6 +181,10 @@ const headers: any[] = [
     value: "name",
   },
   {
+    title: t("folder"),
+    value: "folder"
+  },
+  {
     headerProps: {
       class: "w-32"
     },
@@ -179,10 +195,17 @@ const headers: any[] = [
 ];
 
 const filteredProjects = computed(() => {
-  const nameMatch = nameFilter.value?.toLowerCase();
+  const match = search.value?.toLowerCase();
   const packageReferenceMatch = packageReferenceFilter.value?.toLowerCase();
 
-  let result = projects.value.filter(project => (!nameMatch || project.name.toLowerCase().includes(nameMatch)) && (!packagesOnly.value || !!project.version));
+  let result = projects.value.filter(project => (
+    (!match || project.name.toLowerCase().includes(match) || project.folder.toLowerCase().includes(match))) &&
+    (
+      (projectType.value === "versioned" && !!project.version) ||
+      (projectType.value === "unversioned" && !project.version) ||
+      (projectType.value === "all")
+    )
+  );
 
   if (packageReferenceFilter.value) {
     result = result.filter(project => (project.packageReferences ?? []).some(reference => reference.name.toLowerCase().includes(packageReferenceMatch)))

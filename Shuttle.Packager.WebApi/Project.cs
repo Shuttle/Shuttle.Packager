@@ -26,10 +26,13 @@ public class Project
         }
 
         FilePath = Guard.AgainstEmpty(path);
+        Folder = Path.GetDirectoryName(path) ?? string.Empty;
         Name = Path.GetFileNameWithoutExtension(path);
 
         Read();
     }
+
+    public string Folder { get; } 
 
     private void Read()
     {

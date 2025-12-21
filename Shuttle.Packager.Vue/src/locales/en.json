@@ -1,15 +1,21 @@
 {
+  "all": "All",
   "allow-push": "Allow push?",
   "close": "Close",
   "debug": "Debug",
+  "file-path": "File path",
+  "folder": "Folder",
   "load": "Load",
   "name": "Name",
   "nuget-version": "NuGet version",
   "package-reference": "Package reference",
-  "packages-only": "Packages only?",
+  "package-source": "Package source",
   "projects": "Projects",
   "release": "Release",
+  "reload": "Reload",
   "search": "Search",
   "show-log": "Show log",
-  "version": "Version"
+  "unversioned": "unversioned",
+  "version": "Version",
+  "versioned": "Versioned"
 }

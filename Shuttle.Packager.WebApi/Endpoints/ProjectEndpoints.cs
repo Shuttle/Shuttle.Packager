@@ -52,6 +52,8 @@ public static class ProjectEndpoints
         {
             Id = project.Id,
             Name = project.Name,
+            FilePath = project.FilePath,
+            Folder = project.Folder,
             Version = project.Version,
             PackageReferences = project.PackageReferences
                 .Select(item => new ProjectModel.PackageReference
