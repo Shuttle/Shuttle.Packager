@@ -2,7 +2,8 @@
   <s-filter-drawer hide-filter>
     <v-btn :append-icon="mdiFileReplaceOutline" @click="reload">{{
       $t('reload')
-      }}</v-btn>
+    }}</v-btn>
+    <v-divider></v-divider>
     <v-btn-toggle v-model="projectType" variant="outlined" group mandatory>
       <v-btn value="versioned" :icon="mdiNumeric"></v-btn>
       <v-btn value="unversioned" :icon="mdiNumericOff"></v-btn>
