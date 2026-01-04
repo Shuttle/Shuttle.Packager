@@ -9,6 +9,8 @@ namespace Shuttle.Packager.WebApi.Endpoints;
 
 public static class ProjectEndpoints
 {
+    private static readonly Regex FailedExpression = new(@"\berror\b.*:|\bfailed\b", RegexOptions.IgnoreCase);
+
     private static async Task<string> ExecuteAsync(string arguments)
     {
         var process = new Process
@@ -91,7 +93,7 @@ public static class ProjectEndpoints
             return Results.Ok(new
             {
                 Log = log,
-                Failed = log.Contains("failed", StringComparison.InvariantCultureIgnoreCase)
+                Failed = FailedExpression.IsMatch(log)
             });
         });
 
@@ -104,7 +106,7 @@ public static class ProjectEndpoints
             return Results.Ok(new
             {
                 Log = log,
-                Failed = log.Contains("failed", StringComparison.InvariantCultureIgnoreCase)
+                Failed = FailedExpression.IsMatch(log)
             });
         });
 
@@ -128,7 +130,7 @@ public static class ProjectEndpoints
 
             var project = await repository.GetAsync(id);
             var packLog = await ExecuteAsync($"pack {project.FilePath}");
-            var packFailed = packLog.Contains("failed", StringComparison.InvariantCultureIgnoreCase);
+            var packFailed = FailedExpression.IsMatch(packLog);
 
             if (packFailed)
             {
@@ -152,7 +154,7 @@ public static class ProjectEndpoints
             }
 
             var nugetLog = await ExecuteAsync(command);
-            var nugetFailed = nugetLog.Contains("error:", StringComparison.InvariantCultureIgnoreCase);
+            var nugetFailed = FailedExpression.IsMatch(nugetLog);
 
             return Results.Ok(new
             {
@@ -161,7 +163,7 @@ public static class ProjectEndpoints
             });
         });
 
-        app.MapPatch("/projects/{id:guid}/property", async (IOptions<PackagerOptions> options, IProjectRepository repository, Guid id, PropertyPatchModel model) =>
+        app.MapPatch("/projects/{id:guid}/property", async (IProjectRepository repository, Guid id, PropertyPatchModel model) =>
         {
             var project = await repository.GetAsync(id);
 
