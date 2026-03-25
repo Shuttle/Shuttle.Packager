@@ -21,7 +21,6 @@
         {{ $t("release") }}
       </v-btn>
     </v-btn-toggle>
-
   </s-filter-drawer>
   <v-card flat>
     <v-card-title class="s-card-title">
@@ -46,6 +45,7 @@
       </template>
       <template v-slot:header.action="">
         <div class="s-strip my-2">
+          <s-filter-toggle />
           <v-btn :icon="mdiPlay" size="x-small" @click="build()"></v-btn>
           <v-btn :icon="mdiPlayBoxOutline" size="x-small" @click="pack()"></v-btn>
           <v-btn v-if="allowPush" :icon="mdiUploadBoxOutline" size="x-small" @click="push()"></v-btn>

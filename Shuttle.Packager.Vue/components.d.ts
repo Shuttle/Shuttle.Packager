@@ -8,9 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    FilterDrawer: typeof import('./src/components/FilterDrawer.vue')['default']
-    FormTitle: typeof import('./src/components/FormTitle.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShuttleFilterDrawer: typeof import('./src/components/ShuttleFilterDrawer.vue')['default']
+    ShuttleFilterToggle: typeof import('./src/components/ShuttleFilterToggle.vue')['default']
+    ShuttleTitle: typeof import('./src/components/ShuttleTitle.vue')['default']
   }
 }

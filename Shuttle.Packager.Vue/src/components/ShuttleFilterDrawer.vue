@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer location="left" width="350">
+  <v-navigation-drawer v-if="drawerStore.filterDrawerVisible" location="left">
     <form @submit.prevent="emit('filter')" class="p-4 flex flex-col gap-2">
       <slot></slot>
       <v-btn v-if="!props.hideFilter" :append-icon="mdiFilterOutline" type="submit" class="self-end">{{
@@ -11,6 +11,9 @@
 
 <script setup lang="ts">
 import { mdiFilterOutline } from '@mdi/js'
+import { useDrawerStore } from '@/stores/drawer'
+
+const drawerStore = useDrawerStore()
 
 interface Props {
   hideFilter?: boolean

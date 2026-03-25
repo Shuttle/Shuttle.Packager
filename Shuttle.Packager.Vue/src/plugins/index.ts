@@ -15,14 +15,16 @@ import "@/styles/main.css";
 import type { App } from "vue";
 
 // Components
-import FilterDrawer from "@/components/FilterDrawer.vue";
-import FormTitle from "@/components/FormTitle.vue";
+import ShuttleFilterDrawer from "@/components/ShuttleFilterDrawer.vue";
+import ShuttleFilterToggle from "@/components/ShuttleFilterToggle.vue";
+import ShuttleTitle from "@/components/ShuttleTitle.vue";
 
 document.querySelector("html")?.setAttribute("lang", i18n.global.locale.value);
 
 export function registerPlugins(app: App) {
   app.use(vuetify).use(router).use(pinia).use(i18n);
 
-  app.component("s-title", FormTitle);
-  app.component("s-filter-drawer", FilterDrawer);
+  app.component("s-filter-drawer", ShuttleFilterDrawer);
+  app.component("s-filter-toggle", ShuttleFilterToggle);
+  app.component("s-title", ShuttleTitle);
 }
