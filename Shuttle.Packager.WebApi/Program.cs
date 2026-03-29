@@ -1,12 +1,14 @@
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 using Shuttle.Packager.WebApi;
 using Shuttle.Packager.WebApi.Endpoints;
 using Shuttle.Packager.WebApi.Repositories;
 
 var webApplicationBuilder = WebApplication.CreateBuilder(args);
+var services = webApplicationBuilder.Services;
+var configuration = webApplicationBuilder.Configuration;
 
-webApplicationBuilder.Services
-    .AddSwaggerGen()
+services
     .AddApiVersioning(options =>
     {
         options.ReportApiVersions = true;
@@ -17,29 +19,43 @@ webApplicationBuilder.Services
         options.SubstituteApiVersionInUrl = true;
     });
 
-webApplicationBuilder.Services.Configure<PackagerOptions>(webApplicationBuilder.Configuration.GetSection(PackagerOptions.SectionName));
-
-webApplicationBuilder.Services
+services
+    .Configure<PackagerOptions>(configuration.GetSection(PackagerOptions.SectionName))
     .AddSingleton<IValidateOptions<PackagerOptions>, PackagerOptionsValidator>()
     .AddSingleton<IProjectRepository, InMemoryProjectRepository>()
-    .AddHttpClient();
-
-webApplicationBuilder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
+    .AddHttpClient()
+    .AddEndpointsApiExplorer()
+    .AddOpenApi(options =>
     {
-        builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+        options.AddSchemaTransformer((schema, _, _) =>
+        {
+            schema.Title = schema.Title?.Replace("+", "_");
+            return Task.CompletedTask;
+        });
+    })
+    .AddCors(options =>
+    {
+        options.AddDefaultPolicy(builder =>
+        {
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
     });
-});
 
 var app = webApplicationBuilder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
 app.UseCors();
+
+app.MapOpenApi();
+app.MapScalarApiReference(options =>
+{
+    options
+        .WithTitle("Shuttle Packager API")
+        .WithTheme(ScalarTheme.DeepSpace)
+        .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+});
 
 app
     .MapPackageSourceEndpoints()
