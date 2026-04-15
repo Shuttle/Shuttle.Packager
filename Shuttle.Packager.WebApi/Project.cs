@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Shuttle.Core.Contract;
+using Shuttle.Contract;
 
 namespace Shuttle.Packager.WebApi;
 

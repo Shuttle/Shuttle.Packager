@@ -99,10 +99,10 @@
       </template>
       <template v-slot:item.version="{ item }">
         <form v-if="item.editingVersion" @submit.prevent="setVersion(item)" class="s-strip w-64 mt-2">
-          <v-btn :icon="mdiCloseCircleOutline" size="x-small" @click.stop="cancelVersion(item)"></v-btn>
-          <v-btn :icon="mdiCheckCircleOutline" size="x-small" @click.stop="setVersion(item)"></v-btn>
           <v-text-field v-model="item.vnext" hide-details variant="solo-filled" density="compact"
             @click.stop></v-text-field>
+          <v-btn :icon="mdiCheckCircleOutline" size="x-small" @click.stop="setVersion(item)"></v-btn>
+          <v-btn :icon="mdiCloseCircleOutline" size="x-small" @click.stop="cancelVersion(item)"></v-btn>
         </form>
         <span v-else class="cursor-pointer" @click.stop="openVersion(item)">{{ item.version }}</span>
       </template>
@@ -170,9 +170,6 @@ const headers: any[] = [
     }
   },
   {
-    headerProps: {
-      class: "w-64"
-    },
     cellProps: {
       class: "whitespace-nowrap"
     },
@@ -189,8 +186,8 @@ const headers: any[] = [
     value: "folder"
   },
   {
-    headerProps: {
-      class: "w-32"
+    cellProps: {
+      class: "whitespace-nowrap"
     },
     align: 'end',
     title: t("nuget-version"),
