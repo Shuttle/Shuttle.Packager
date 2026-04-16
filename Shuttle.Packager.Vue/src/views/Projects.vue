@@ -80,7 +80,7 @@
             <div>{{ item.name }}</div>
             <v-icon :icon="getIcon(item)" @click.stop="togglePackageReferences(item)" class="text-neutral-500" />
           </div>
-          <div v-if="item.showPackageReferences" class="flex flex-row gap-2 mt-2 w-fit">
+          <div v-if="item.showPackageReferences" class="flex flex-col gap-2 mt-2">
             <v-chip v-for="packageReference in item.packageReferences" :key="packageReference.name" density="compact"
               class="text-xs text-neutral-500">{{
                 `${packageReference.name}@${packageReference.version}` }}</v-chip>
