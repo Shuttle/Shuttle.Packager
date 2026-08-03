@@ -23,7 +23,6 @@ services
     .Configure<PackagerOptions>(configuration.GetSection(PackagerOptions.SectionName))
     .AddSingleton<IValidateOptions<PackagerOptions>, PackagerOptionsValidator>()
     .AddSingleton<IProjectRepository, InMemoryProjectRepository>()
-    .AddHttpClient()
     .AddEndpointsApiExplorer()
     .AddOpenApi(options =>
     {

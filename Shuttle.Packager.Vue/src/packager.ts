@@ -46,8 +46,8 @@ export type FormTitle = {
   type?: "borderless" | "normal";
 };
 
-export type NugetVersion = {
-  nugetVersion: string;
+export type PackageVersion = {
+  version: string;
 };
 
 export type PackageOptions = {
@@ -62,6 +62,7 @@ export type PackageResult = {
 
 export type PackageSource = {
   name: string;
+  url?: string;
 };
 
 export type PackageReference = {
@@ -82,7 +83,7 @@ export type Project = {
   busy: boolean;
   log: string;
   status: string;
-  nugetVersion?: string;
+  latestVersion?: string;
   showPackageReferences?: boolean;
 };
 

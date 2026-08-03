@@ -49,7 +49,7 @@
           <v-btn :icon="mdiPlay" size="x-small" @click="build()"></v-btn>
           <v-btn :icon="mdiPlayBoxOutline" size="x-small" @click="pack()"></v-btn>
           <v-btn v-if="allowPush" :icon="mdiUploadBoxOutline" size="x-small" @click="push()"></v-btn>
-          <v-btn :icon="mdiHexadecimal" size="x-small" @click="getNugetVersion()"></v-btn>
+          <v-btn :icon="mdiHexadecimal" size="x-small" @click="getLatestVersion()"></v-btn>
         </div>
       </template>
       <template v-slot:item.action="{ item }">
@@ -65,7 +65,7 @@
               :disabled="item.busy"></v-btn>
             <v-btn v-if="item.selectable && allowPush" :icon="mdiUploadBoxOutline" size="x-small" @click="push(item)"
               :disabled="item.busy"></v-btn>
-            <v-btn v-if="item.selectable" :icon="mdiHexadecimal" size="x-small" @click="getNugetVersion(item)"
+            <v-btn v-if="item.selectable" :icon="mdiHexadecimal" size="x-small" @click="getLatestVersion(item)"
               :disabled="item.busy"></v-btn>
             <v-btn :icon="mdiApplicationOutline" size="x-small" @click="open(item)"></v-btn>
             <v-btn :icon="mdiOpenInNew" size="x-small" :href="`https://www.nuget.org/packages/${item.name}`"
@@ -91,10 +91,10 @@
       <template v-slot:item.folder="{ item }">
         <span class="text-neutral-600 hover:text-neutral-300">{{ item.folder }}</span>
       </template>
-      <template v-slot:item.nugetVersion="{ item }">
-        <div v-if="!!item.nugetVersion" class="s-strip my-2 justify-end">
-          <v-icon v-if="item.nugetVersion !== item.version" :icon="mdiNotEqualVariant" class="text-orange-400" />
-          <div :class="item.nugetVersion !== item.version ? 'text-orange-400' : ''">{{ item.nugetVersion }}</div>
+      <template v-slot:item.latestVersion="{ item }">
+        <div v-if="!!item.latestVersion" class="s-strip my-2 justify-end">
+          <v-icon v-if="item.latestVersion !== item.version" :icon="mdiNotEqualVariant" class="text-orange-400" />
+          <div :class="item.latestVersion !== item.version ? 'text-orange-400' : ''">{{ item.latestVersion }}</div>
         </div>
       </template>
       <template v-slot:item.version="{ item }">
@@ -143,7 +143,7 @@ import {
   mdiPlayBoxOutline,
   mdiUploadBoxOutline
 } from '@mdi/js';
-import type { NugetVersion, PackageOptions, PackageResult, PackageSource, Project } from '@/packager';
+import type { PackageOptions, PackageResult, PackageSource, PackageVersion, Project } from '@/packager';
 import { onMounted, ref, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -190,8 +190,8 @@ const headers: any[] = [
       class: "whitespace-nowrap"
     },
     align: 'end',
-    title: t("nuget-version"),
-    value: "nugetVersion",
+    title: t("latest-version"),
+    value: "latestVersion",
   },
 ];
 
@@ -278,7 +278,7 @@ const getProject = (id: string) => {
   return result;
 }
 
-const getNugetVersion = (project?: Project) => {
+const getLatestVersion = (project?: Project) => {
   const items = project ? [project] : selected.value.map(id => getProject(id));
 
   items.forEach(async item => {
@@ -289,9 +289,11 @@ const getNugetVersion = (project?: Project) => {
 
       collapse(item.id)
 
-      const result = await api.get<NugetVersion>(`projects/${item.id}/nuget-version`)
+      const result = await api.get<PackageVersion>(`projects/${item.id}/package-version`, {
+        params: { packageSourceName: packageOptions.value.packageSourceName }
+      })
 
-      item.nugetVersion = result.data.nugetVersion
+      item.latestVersion = result.data.version
     } finally {
       item.busy = false;
     }

@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
+using NuGet.Common;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using Shuttle.Packager.WebApi.Repositories;
 
 namespace Shuttle.Packager.WebApi.Endpoints;
@@ -206,28 +208,54 @@ public static class ProjectEndpoints
             return Results.Ok();
         });
 
-        app.MapGet("/projects/{id:guid}/nuget-version", async (IHttpClientFactory httpClientFactory, IProjectRepository repository, Guid id) =>
+        app.MapGet("/projects/{id:guid}/package-version", async (IOptions<PackagerOptions> options, IProjectRepository repository, Guid id, string? packageSourceName) =>
         {
-            var httpClient = httpClientFactory.CreateClient("nuget");
-
             var project = await repository.GetAsync(id);
 
-            using var response = await httpClient.GetAsync(new Uri($"https://api.nuget.org/v3-flatcontainer/{project.Name}/index.json"));
+            var sourceUrl = "https://api.nuget.org/v3/index.json";
 
-            var version = string.Empty;
-
-            if (response.IsSuccessStatusCode)
+            if (!string.IsNullOrWhiteSpace(packageSourceName))
             {
-                using var document = JsonDocument.Parse(response.Content.ReadAsStringAsync().Result);
+                var packageSource = options.Value.PackageSources.FirstOrDefault(item => item.Name.Equals(packageSourceName, StringComparison.OrdinalIgnoreCase));
 
-                version = document.RootElement.GetProperty("versions").EnumerateArray()
-                    .LastOrDefault()
-                    .ToString();
+                if (packageSource == null)
+                {
+                    return Results.BadRequest($"Unknown package source name '{packageSourceName}'.");
+                }
+
+                if (string.IsNullOrWhiteSpace(packageSource.Url))
+                {
+                    return Results.BadRequest($"Package source '{packageSourceName}' does not have a 'Url' configured.");
+                }
+
+                sourceUrl = packageSource.Url;
+            }
+
+            string version;
+
+            try
+            {
+                var sourceRepository = Repository.Factory.GetCoreV3(sourceUrl);
+                var findPackageByIdResource = await sourceRepository.GetResourceAsync<FindPackageByIdResource>();
+
+                using var cacheContext = new SourceCacheContext
+                {
+                    NoCache = true,
+                    DirectDownload = true
+                };
+
+                var versions = await findPackageByIdResource.GetAllVersionsAsync(project.Name, cacheContext, NullLogger.Instance, CancellationToken.None);
+
+                version = versions?.OrderByDescending(item => item).FirstOrDefault()?.ToNormalizedString() ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(detail: ex.Message, statusCode: 502);
             }
 
             return Results.Ok(new
             {
-                NugetVersion = version
+                Version = version
             });
         });
 

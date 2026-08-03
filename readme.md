@@ -11,8 +11,19 @@ The structure for the settings is as follows:
     "PackageSources": [
       {
         "Name": "my-packages",
-        "Key": "key"
+        "Key": "key",
+        "Url": "https://my-feed.example.com/v3/index.json"
+      },
+      {
+        "Name": "local",
+        "Url": "D:\\packages\\local-feed"
       }
     ]
   }
 ```
+
+`Url` identifies where a package source's packages actually live and is used to look up the latest published
+version of a project (via the "get package version" action) — it accepts either a NuGet V3 service index URL
+(e.g. `https://api.nuget.org/v3/index.json`) or a local folder path used as a NuGet feed (e.g. one added with
+`dotnet nuget add source <folder>` for locally-built development packages). When the version check is run
+without selecting a package source, it defaults to nuget.org. `Key` is only required for sources you push to.
