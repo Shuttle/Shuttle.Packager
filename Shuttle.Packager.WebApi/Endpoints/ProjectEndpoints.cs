@@ -3,19 +3,17 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using NuGet.Common;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using Shuttle.Packager.WebApi.Repositories;
+using Shuttle.Packager.WebApi.Services;
 
 namespace Shuttle.Packager.WebApi.Endpoints;
 
 public static class ProjectEndpoints
 {
-    private static readonly Regex FailedExpression = new(@"\berror\b.*:|\bfailed\b", RegexOptions.IgnoreCase);
-
-    private static async Task<string> ExecuteAsync(string arguments)
+    private static async Task<(string Log, bool Failed)> ExecuteAsync(string arguments)
     {
-        var process = new Process
+        using var process = new Process
         {
             StartInfo = new()
             {
@@ -24,6 +22,7 @@ public static class ProjectEndpoints
                 CreateNoWindow = true,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false
             },
             EnableRaisingEvents = true
@@ -31,23 +30,29 @@ public static class ProjectEndpoints
 
         var log = new StringBuilder();
 
-        process.OutputDataReceived += (_, args) =>
+        void Append(string? data)
         {
-            log.AppendLine(args.Data ?? string.Empty);
-        };
+            if (data == null)
+            {
+                return;
+            }
+
+            lock (log)
+            {
+                log.AppendLine(data);
+            }
+        }
+
+        process.OutputDataReceived += (_, args) => Append(args.Data);
+        process.ErrorDataReceived += (_, args) => Append(args.Data);
 
         process.Start();
         process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
 
-        while (!process.HasExited)
-        {
-            await Task.Delay(100);
-        }
+        await process.WaitForExitAsync();
 
-        process.CancelOutputRead();
-
-        var logText = log.ToString();
-        return logText;
+        return (log.ToString(), process.ExitCode != 0);
     }
 
     private static ProjectModel Map(Project project)
@@ -90,12 +95,12 @@ public static class ProjectEndpoints
         {
             var project = await repository.GetAsync(id);
 
-            var log = await ExecuteAsync($"build {project.FilePath} --configuration {model.Configuration}");
+            var (log, failed) = await ExecuteAsync($"build {project.FilePath} --configuration {model.Configuration}");
 
             return Results.Ok(new
             {
                 Log = log,
-                Failed = FailedExpression.IsMatch(log)
+                Failed = failed
             });
         });
 
@@ -103,12 +108,12 @@ public static class ProjectEndpoints
         {
             var project = await repository.GetAsync(id);
 
-            var log = await ExecuteAsync($"pack {project.FilePath} --configuration {model.Configuration}");
+            var (log, failed) = await ExecuteAsync($"pack {project.FilePath} --configuration {model.Configuration}");
 
             return Results.Ok(new
             {
                 Log = log,
-                Failed = FailedExpression.IsMatch(log)
+                Failed = failed
             });
         });
 
@@ -131,8 +136,7 @@ public static class ProjectEndpoints
             }
 
             var project = await repository.GetAsync(id);
-            var packLog = await ExecuteAsync($"pack {project.FilePath}");
-            var packFailed = FailedExpression.IsMatch(packLog);
+            var (packLog, packFailed) = await ExecuteAsync($"pack {project.FilePath}");
 
             if (packFailed)
             {
@@ -155,8 +159,7 @@ public static class ProjectEndpoints
                 command += $" -k {packageSourceKey}";
             }
 
-            var nugetLog = await ExecuteAsync(command);
-            var nugetFailed = FailedExpression.IsMatch(nugetLog);
+            var (nugetLog, nugetFailed) = await ExecuteAsync(command);
 
             return Results.Ok(new
             {
@@ -208,55 +211,45 @@ public static class ProjectEndpoints
             return Results.Ok();
         });
 
-        app.MapGet("/projects/{id:guid}/package-version", async (IOptions<PackagerOptions> options, IProjectRepository repository, Guid id, string? packageSourceName) =>
+        app.MapGet("/projects/{id:guid}/package-version", async (IOptions<PackagerOptions> options, IProjectRepository repository, IPackageVersionService packageVersionService, Guid id, string? packageSourceName, CancellationToken cancellationToken) =>
         {
-            var project = await repository.GetAsync(id);
-
-            var sourceUrl = "https://api.nuget.org/v3/index.json";
+            PackageSourceOptions? packageSourceOptions = null;
 
             if (!string.IsNullOrWhiteSpace(packageSourceName))
             {
-                var packageSource = options.Value.PackageSources.FirstOrDefault(item => item.Name.Equals(packageSourceName, StringComparison.OrdinalIgnoreCase));
+                packageSourceOptions = options.Value.PackageSources.FirstOrDefault(item => item.Name.Equals(packageSourceName, StringComparison.OrdinalIgnoreCase));
 
-                if (packageSource == null)
+                if (packageSourceOptions == null)
                 {
                     return Results.BadRequest($"Unknown package source name '{packageSourceName}'.");
                 }
-
-                if (string.IsNullOrWhiteSpace(packageSource.Url))
-                {
-                    return Results.BadRequest($"Package source '{packageSourceName}' does not have a 'Url' configured.");
-                }
-
-                sourceUrl = packageSource.Url;
             }
 
-            string version;
+            var project = await repository.GetAsync(id);
 
             try
             {
-                var sourceRepository = Repository.Factory.GetCoreV3(sourceUrl);
-                var findPackageByIdResource = await sourceRepository.GetResourceAsync<FindPackageByIdResource>();
-
-                using var cacheContext = new SourceCacheContext
+                return Results.Ok(new
                 {
-                    NoCache = true,
-                    DirectDownload = true
-                };
-
-                var versions = await findPackageByIdResource.GetAllVersionsAsync(project.Name, cacheContext, NullLogger.Instance, CancellationToken.None);
-
-                version = versions?.OrderByDescending(item => item).FirstOrDefault()?.ToNormalizedString() ?? string.Empty;
+                    Version = await packageVersionService.GetLatestVersionAsync(project.Name, packageSourceOptions, cancellationToken)
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (ApplicationException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+            catch (FatalProtocolException ex)
+            {
+                return Results.Problem(detail: ExceptionUtilities.DisplayMessage(ex), title: $"Could not reach package source '{packageSourceName ?? "nuget.org"}'.", statusCode: 502);
             }
             catch (Exception ex)
             {
-                return Results.Problem(detail: ex.Message, statusCode: 502);
+                return Results.Problem(detail: ExceptionUtilities.DisplayMessage(ex), title: $"Could not determine the latest version for '{project.Name}'.", statusCode: 500);
             }
-
-            return Results.Ok(new
-            {
-                Version = version
-            });
         });
 
         return app;

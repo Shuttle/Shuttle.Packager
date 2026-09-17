@@ -70,6 +70,14 @@ export type PackageReference = {
   version: string;
 };
 
+export type ProblemDetails = {
+  type?: string;
+  title?: string;
+  status?: number;
+  detail?: string;
+  instance?: string;
+};
+
 export type Project = {
   id: string;
   name: string;

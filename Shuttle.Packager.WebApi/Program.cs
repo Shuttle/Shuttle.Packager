@@ -1,8 +1,11 @@
 using Microsoft.Extensions.Options;
+using NuGet.Common;
+using NuGet.Credentials;
 using Scalar.AspNetCore;
 using Shuttle.Packager.WebApi;
 using Shuttle.Packager.WebApi.Endpoints;
 using Shuttle.Packager.WebApi.Repositories;
+using Shuttle.Packager.WebApi.Services;
 
 var webApplicationBuilder = WebApplication.CreateBuilder(args);
 var services = webApplicationBuilder.Services;
@@ -23,6 +26,7 @@ services
     .Configure<PackagerOptions>(configuration.GetSection(PackagerOptions.SectionName))
     .AddSingleton<IValidateOptions<PackagerOptions>, PackagerOptionsValidator>()
     .AddSingleton<IProjectRepository, InMemoryProjectRepository>()
+    .AddSingleton<IPackageVersionService, PackageVersionService>()
     .AddEndpointsApiExplorer()
     .AddOpenApi(options =>
     {
@@ -42,6 +46,8 @@ services
                 .AllowAnyHeader();
         });
     });
+
+DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance, true);
 
 var app = webApplicationBuilder.Build();
 

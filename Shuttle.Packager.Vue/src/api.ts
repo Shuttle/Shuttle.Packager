@@ -2,6 +2,23 @@ import axios, { type AxiosInstance } from "axios";
 import { useAlertStore } from "@/stores/alert";
 import configuration from "./configuration";
 import { i18n } from "@/i18n";
+import type { ProblemDetails } from "@/packager";
+
+const getErrorMessage = (error: any): string => {
+  const data = error.response?.data;
+
+  if (data && typeof data === "object") {
+    const problemDetails = data as ProblemDetails;
+
+    return problemDetails.detail || problemDetails.title || JSON.stringify(data);
+  }
+
+  return (
+    data ||
+    error.response?.statusText ||
+    "(unknown communication/network error)"
+  );
+};
 
 const configure = (api: AxiosInstance): AxiosInstance => {
   api.interceptors.response.use(
@@ -20,10 +37,7 @@ const configure = (api: AxiosInstance): AxiosInstance => {
       }
 
       alertStore.add({
-        message:
-          error.response?.data ||
-          error.response?.statusText ||
-          "(unknown communication/network error)",
+        message: getErrorMessage(error),
         type: "error",
         name: "api-error",
       });
