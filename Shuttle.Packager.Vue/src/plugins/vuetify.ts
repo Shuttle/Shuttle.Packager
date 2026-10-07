@@ -23,8 +23,6 @@ const colors = {
   "primary--active": "#eb7826",
   "primary-text--hover": "#f9f9f9",
   "primary-text--active": "#d1d1d1",
-  secondary: "#444444",
-  "secondary-darken-1": "#383838",
   error: "#bb4445",
   info: "#2196F3",
   success: "#4CAF50",
@@ -33,12 +31,22 @@ const colors = {
 
 const darkTheme: ThemeDefinition = {
   dark: true,
-  colors: colors,
+  colors: {
+    ...colors,
+    secondary: "#94A3B8",
+    "secondary-darken-1": "#64748B",
+    "secondary--hover": "#A9B6C7",
+  },
 };
 
 const lightTheme: ThemeDefinition = {
   dark: false,
-  colors: colors,
+  colors: {
+    ...colors,
+    secondary: "#475569",
+    "secondary-darken-1": "#334155",
+    "secondary--hover": "#526176",
+  },
 };
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
